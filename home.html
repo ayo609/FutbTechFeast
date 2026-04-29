@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — FUTB TechFest 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0D2B4E;
+            --navy-deep: #06182B;
+            --navy-mid: #0a2240;
+            --gold: #C8960C;
+            --gold-light: #F0B429;
+            --gold-pale: #FCEABB;
+            --blue: #1565C0;
+            --steel: #1976D2;
+            --crimson: #B71C1C;
+            --green: #00C853;
+            --orange: #FF9800;
+            --dark: #080F1A;
+            --darker: #040810;
+            --card: rgba(13, 43, 78, 0.45);
+            --card-hover: rgba(13, 43, 78, 0.7);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-strong: rgba(255, 255, 255, 0.07);
+            --border: rgba(200, 150, 12, 0.18);
+            --border-mid: rgba(200, 150, 12, 0.3);
+            --border-gold: rgba(200, 150, 12, 0.5);
+            --text: #D8E8FF;
+            --text-bright: #F0F6FF;
+            --muted: #7A8FAA;
+            --muted-light: #9AACCB;
+            --shadow-gold: 0 0 40px rgba(200, 150, 12, 0.12);
+            --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.35);
+            --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --radius-xs: 6px;
+            --radius-sm: 10px;
+            --radius: 14px;
+            --radius-lg: 22px;
+            --radius-xl: 32px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) var(--darker);
+        }
+        html::-webkit-scrollbar { width: 5px; }
+        html::-webkit-scrollbar-track { background: var(--darker); }
+        html::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px;
+        }
+
+        /* ── NOISE + BACKGROUND ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 10% 0%, rgba(21,101,192,0.13) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 90% 100%, rgba(200,150,12,0.08) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 40% at 50% 50%, rgba(13,43,78,0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; opacity: 0.3;
+        }
+
+        /* ── TOP NAV ── */
+        .top-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(4, 8, 16, 0.8);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 5%;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 62px;
+        }
+        .nav-logo {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.55rem;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; text-decoration: none; cursor: pointer;
+        }
+        .nav-actions {
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .notif-btn {
+            background: var(--glass-strong);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            padding: 7px 9px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+            display: flex; align-items: center;
+            line-height: 1;
+        }
+        .notif-btn:hover {
+            color: var(--text-bright);
+            border-color: var(--border-mid);
+            background: var(--glass);
+        }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            min-width: 18px; height: 18px;
+            background: var(--crimson); color: white;
+            font-size: 0.58rem; font-weight: 700;
+            border-radius: 9px; padding: 0 4px;
+            display: none; align-items: center; justify-content: center;
+            border: 1.5px solid var(--darker);
+        }
+        .notif-badge.show { display: flex; }
+
+        .user-pill {
+            display: flex; align-items: center; gap: 0.55rem;
+            background: var(--glass-strong);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 4px 12px 4px 4px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+        .user-pill:hover {
+            border-color: var(--border-mid);
+            background: rgba(200,150,12,0.07);
+        }
+        .user-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--navy-deep);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            flex-shrink: 0;
+        }
+        .user-name-short {
+            font-size: 0.78rem; font-weight: 600; color: var(--text);
+            max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: #06182B;
+            border: 1px solid var(--border-mid);
+            border-radius: var(--radius);
+            padding: 0.4rem 0;
+            min-width: 210px;
+            opacity: 0; visibility: hidden;
+            transform: translateY(-6px) scale(0.97);
+            transition: all var(--transition);
+            z-index: 200;
+            box-shadow: var(--shadow-deep);
+        }
+        .dropdown.active {
+            opacity: 1; visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .dropdown-header {
+            padding: 0.8rem 1.2rem 0.6rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.3rem;
+        }
+        .dropdown-header .d-name {
+            font-size: 0.82rem; font-weight: 600; color: var(--text-bright);
+        }
+        .dropdown-header .d-email {
+            font-size: 0.68rem; color: var(--muted); margin-top: 1px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .dropdown a, .dropdown button {
+            display: flex; align-items: center; gap: 0.6rem;
+            width: 100%; text-align: left;
+            padding: 0.6rem 1.2rem;
+            color: var(--muted-light); text-decoration: none;
+            font-size: 0.8rem; background: none; border: none;
+            cursor: pointer; font-family: 'DM Sans', sans-serif;
+            transition: all var(--transition-fast);
+            letter-spacing: 0.01em;
+        }
+        .dropdown a:hover, .dropdown button:hover {
+            background: rgba(200,150,12,0.07); color: var(--text-bright);
+        }
+        .dropdown .divider { height: 1px; background: var(--border); margin: 0.3rem 0; }
+        .dropdown .logout-btn { color: #EF5350; }
+        .dropdown .logout-btn:hover { color: #FF8A80; background: rgba(183,28,28,0.1); }
+
+        /* ── NOTIFICATION PANEL ── */
+        .notif-panel {
+            position: fixed; top: 62px; right: 0;
+            width: 340px; max-width: 90vw;
+            height: calc(100vh - 62px);
+            background: #06182B;
+            border-left: 1px solid var(--border-mid);
+            z-index: 150;
+            transform: translateX(100%);
+            transition: transform var(--transition-slow);
+            overflow-y: auto; padding: 1.5rem;
+        }
+        .notif-panel.open { transform: translateX(0); }
+        .notif-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.2rem;
+        }
+        .notif-panel-header h3 {
+            font-size: 0.95rem; font-weight: 700; color: var(--text-bright);
+        }
+        .notif-panel .mark-read {
+            font-size: 0.68rem; color: var(--gold-light);
+            cursor: pointer; background: none; border: none;
+            font-family: 'DM Sans', sans-serif; letter-spacing: 0.04em;
+        }
+        .notif-item {
+            padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer; transition: all var(--transition);
+            display: flex; gap: 0.7rem; align-items: flex-start;
+        }
+        .notif-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--gold); margin-top: 5px; flex-shrink: 0;
+        }
+        .notif-item.read .notif-dot { background: transparent; border: 1px solid var(--border); }
+        .notif-content p { font-size: 0.78rem; line-height: 1.5; color: var(--text); }
+        .notif-content .time { font-size: 0.65rem; color: var(--muted); margin-top: 0.2rem; }
+        .notif-empty { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2.5rem 0; }
+        .notif-overlay {
+            position: fixed; inset: 0; z-index: 140;
+            background: rgba(0,0,0,0.55); opacity: 0; visibility: hidden;
+            transition: all var(--transition);
+        }
+        .notif-overlay.active { opacity: 1; visibility: visible; }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            position: relative; z-index: 1;
+            max-width: 860px; margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        /* ── HERO SECTION ── */
+        .hero-section {
+            position: relative; margin-bottom: 1.8rem;
+            padding: 2rem 2rem 1.8rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(21,101,192,0.12) 0%, transparent 50%),
+                        linear-gradient(to bottom right, rgba(200,150,12,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: 'TECHFEST 2.0';
+            position: absolute; right: -1rem; top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            font-family: 'Bebas Neue', cursive;
+            font-size: 5rem; letter-spacing: 0.1em;
+            color: rgba(200,150,12,0.04);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .hero-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 1rem; flex-wrap: wrap; position: relative; z-index: 1;
+        }
+        .greeting-area {}
+        .greeting-badge {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(200,150,12,0.1);
+            border: 1px solid var(--border-mid);
+            border-radius: 100px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.67rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .welcome-greeting {
+            font-size: 1.7rem; font-weight: 700;
+            color: var(--text-bright); line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+        .welcome-sub {
+            font-size: 0.82rem; color: var(--muted-light); line-height: 1.5;
+        }
+        .hero-status-pill {
+            display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem;
+            flex-shrink: 0;
+        }
+        .status-badge {
+            padding: 0.35rem 0.9rem;
+            border-radius: 100px;
+            font-size: 0.68rem; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .status-badge.pending {
+            background: rgba(255,152,0,0.12); border: 1px solid rgba(255,152,0,0.35); color: #FFB74D;
+        }
+        .status-badge.confirmed {
+            background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.3); color: #69F0AE;
+        }
+        .status-badge.shortlisted {
+            background: rgba(21,101,192,0.12); border: 1px solid rgba(21,101,192,0.35); color: #64B5F6;
+        }
+        .status-badge.rejected {
+            background: rgba(183,28,28,0.1); border: 1px solid rgba(183,28,28,0.3); color: #EF9A9A;
+        }
+        .event-label {
+            font-size: 0.72rem; color: var(--muted); text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .hero-divider {
+            height: 1px; background: var(--border);
+            margin: 1.4rem 0; position: relative; z-index: 1;
+        }
+        /* Countdown inside hero */
+        .countdown-row {
+            display: flex; gap: 0.6rem; position: relative; z-index: 1;
+            align-items: center; flex-wrap: wrap;
+        }
+        .countdown-label {
+            font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--muted); font-family: 'JetBrains Mono', monospace;
+            margin-right: 0.3rem; white-space: nowrap;
+        }
+        .cd-mini {
+            background: rgba(4,8,16,0.5);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.55rem 0.9rem;
+            text-align: center; min-width: 58px;
+            flex: 1;
+        }
+        .cd-mini .cd-num {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.65rem; color: var(--gold-light); line-height: 1;
+        }
+        .cd-mini .cd-lbl {
+            font-size: 0.56rem; color: var(--muted);
+            letter-spacing: 0.1em; text-transform: uppercase;
+            margin-top: 0.2rem; font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── QUICK STATS ROW ── */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+        }
+        .stat-chip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.1rem;
+            display: flex; align-items: center; gap: 0.8rem;
+            transition: all var(--transition);
+        }
+        .stat-chip:hover {
+            border-color: var(--border-mid);
+            transform: translateY(-2px);
+        }
+        .stat-chip-icon {
+            font-size: 1.4rem; line-height: 1;
+            width: 38px; height: 38px;
+            background: rgba(200,150,12,0.08);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .stat-chip-info {}
+        .stat-chip-val {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.4rem; color: var(--gold-light); line-height: 1;
+        }
+        .stat-chip-lbl {
+            font-size: 0.65rem; color: var(--muted);
+            letter-spacing: 0.06em; text-transform: uppercase;
+            margin-top: 0.15rem;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .section-header h3 {
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--gold); font-family: 'JetBrains Mono', monospace;
+        }
+        .section-header a {
+            font-size: 0.72rem; color: var(--muted);
+            text-decoration: none; transition: color var(--transition-fast);
+            letter-spacing: 0.05em;
+        }
+        .section-header a:hover { color: var(--gold-light); }
+
+        /* ── ACTION CARDS ── */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.9rem;
+            margin-bottom: 1.8rem;
+        }
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.3rem 1.1rem;
+            text-decoration: none; color: var(--text);
+            transition: all var(--transition);
+            display: flex; flex-direction: column; gap: 0.7rem;
+            cursor: pointer; position: relative; overflow: hidden;
+        }
+        .action-card::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0; transition: opacity var(--transition);
+        }
+        .action-card:hover {
+            border-color: var(--border-mid);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(200,150,12,0.08);
+            background: var(--card-hover);
+        }
+        .action-card:hover::after { opacity: 1; }
+        .action-icon {
+            font-size: 1.5rem; line-height: 1;
+            width: 44px; height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+        }
+        .action-card:hover .action-icon { transform: scale(1.1); }
+        .action-icon.gold { background: rgba(200,150,12,0.1); }
+        .action-icon.blue { background: rgba(21,101,192,0.1); }
+        .action-icon.teal { background: rgba(0,105,92,0.1); }
+        .action-icon.purple { background: rgba(74,20,140,0.1); }
+        .action-icon.crimson { background: rgba(183,28,28,0.1); }
+        .action-icon.green { background: rgba(0,200,83,0.1); }
+        .action-info {}
+        .action-info h4 {
+            font-size: 0.82rem; font-weight: 600;
+            color: var(--text-bright); margin-bottom: 0.2rem; line-height: 1.3;
+        }
+        .action-info p {
+            font-size: 0.71rem; color: var(--muted); line-height: 1.4;
+        }
+        .action-arrow {
+            font-size: 0.75rem; color: var(--border-gold);
+            margin-top: auto; align-self: flex-end;
+            opacity: 0; transform: translateX(-6px);
+            transition: all var(--transition);
+        }
+        .action-card:hover .action-arrow {
+            opacity: 1; transform: translateX(0);
+        }
+
+        /* ── ANNOUNCEMENTS ── */
+        .announcement-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1rem 1.3rem;
+            margin-bottom: 0.7rem;
+            transition: all var(--transition);
+            display: flex; gap: 1rem; align-items: flex-start;
+            cursor: pointer;
+        }
+        .announcement-card:hover { border-color: var(--border-mid); }
+        .ann-icon {
+            font-size: 1.1rem; line-height: 1; flex-shrink: 0;
+            width: 36px; height: 36px;
+            background: rgba(200,150,12,0.08);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            margin-top: 1px;
+        }
+        .ann-body {}
+        .announcement-card .ann-date {
+            font-size: 0.62rem; color: var(--gold);
+            letter-spacing: 0.1em; text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;
+        }
+        .announcement-card h4 {
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--text-bright); margin-bottom: 0.3rem;
+        }
+        .announcement-card p {
+            font-size: 0.76rem; color: var(--muted-light); line-height: 1.55;
+        }
+        .announcement-empty {
+            text-align: center; padding: 2.5rem 1rem;
+            color: var(--muted); font-size: 0.8rem;
+            background: var(--card); border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+        .announcement-empty .empty-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+        /* ── IMPORTANT DATES ── */
+        .dates-row {
+            display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.8rem;
+        }
+        .date-chip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.9rem 1.1rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            flex: 1; min-width: 180px;
+            transition: all var(--transition);
+        }
+        .date-chip:hover { border-color: var(--border-mid); }
+        .date-chip-icon {
+            font-size: 1.3rem; flex-shrink: 0;
+        }
+        .date-chip-info {}
+        .date-chip-title {
+            font-size: 0.75rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.15rem;
+        }
+        .date-chip-val {
+            font-size: 0.68rem; color: var(--gold);
+            font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;
+        }
+
+        /* ── BOTTOM NAV ── */
+        .bottom-nav {
+            display: none;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(4,8,16,0.92);
+            backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+            border-top: 1px solid var(--border);
+            padding: 0.5rem 2% 0.8rem;
+            justify-content: space-around; align-items: center;
+        }
+        .bottom-nav a {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            text-decoration: none; color: var(--muted);
+            font-size: 1.3rem; transition: all var(--transition);
+            padding: 0.4rem 0.7rem;
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+        .bottom-nav a span.nav-label {
+            font-size: 0.58rem; letter-spacing: 0.05em; font-weight: 500;
+        }
+        .bottom-nav a.nav-active {
+            color: var(--gold-light);
+        }
+        .bottom-nav a.nav-active::before {
+            content: '';
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 2px;
+            background: var(--gold); border-radius: 0 0 2px 2px;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: all var(--transition);
+            padding: 1rem;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: #07192e;
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem 2rem; max-width: 440px; width: 100%;
+            text-align: center; position: relative;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+            transform: translateY(24px) scale(0.97);
+            transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+        }
+        .modal-overlay.active .modal-box {
+            transform: translateY(0) scale(1);
+        }
+        .modal-icon-wrap {
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.2rem; font-size: 1.8rem;
+        }
+        .modal-icon-wrap.success { background: rgba(0,200,83,0.1); border: 1.5px solid rgba(0,200,83,0.3); }
+        .modal-icon-wrap.info { background: rgba(21,101,192,0.1); border: 1.5px solid rgba(21,101,192,0.3); }
+        .modal-icon-wrap.warning { background: rgba(255,152,0,0.1); border: 1.5px solid rgba(255,152,0,0.3); }
+        .modal-box h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--text-bright); }
+        .modal-box p { color: var(--muted-light); font-size: 0.86rem; line-height: 1.75; margin-bottom: 1.4rem; }
+        .modal-close {
+            position: absolute; top: 1rem; right: 1rem;
+            background: var(--glass-strong); border: 1px solid var(--border);
+            color: var(--muted); font-size: 1rem;
+            cursor: pointer; width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+        }
+        .modal-close:hover { color: var(--text-bright); border-color: var(--border-mid); }
+        .modal-btn {
+            padding: 0.75rem 1.8rem; border-radius: 100px;
+            font-weight: 700; font-size: 0.86rem;
+            cursor: pointer; border: none; letter-spacing: 0.04em;
+            transition: all var(--transition); font-family: 'DM Sans', sans-serif;
+            display: inline-block; text-decoration: none;
+        }
+        .modal-btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--navy-deep);
+            box-shadow: 0 6px 20px rgba(200,150,12,0.3);
+        }
+        .modal-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(200,150,12,0.45); }
+        .modal-btn-wa {
+            background: #25D366; color: white;
+            box-shadow: 0 6px 20px rgba(37,211,102,0.25);
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            margin: 0 auto 0.8rem; width: 100%;
+        }
+        .modal-btn-wa:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37,211,102,0.4); }
+        .modal-btn-secondary {
+            background: transparent; border: 1.5px solid rgba(255,255,255,0.18);
+            color: var(--text-bright); margin-top: 0.4rem;
+        }
+        .modal-btn-secondary:hover { border-color: var(--border-gold); color: var(--gold-light); }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed; bottom: 100px; left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: #07192e;
+            border: 1px solid var(--border-mid);
+            color: var(--text-bright);
+            padding: 0.75rem 1.4rem;
+            border-radius: 100px; font-size: 0.8rem; font-weight: 500;
+            z-index: 500; opacity: 0; visibility: hidden;
+            transition: all var(--transition);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1; visibility: visible;
+            transform: translateX(-50%) translateY(0);
+            bottom: 112px;
+        }
+
+        /* ── PAGE ENTRANCE ANIMATION ── */
+        .fade-in {
+            opacity: 0; transform: translateY(14px);
+            animation: fadeInUp 0.5s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in:nth-child(1) { animation-delay: 0.05s; }
+        .fade-in:nth-child(2) { animation-delay: 0.1s; }
+        .fade-in:nth-child(3) { animation-delay: 0.15s; }
+        .fade-in:nth-child(4) { animation-delay: 0.2s; }
+        .fade-in:nth-child(5) { animation-delay: 0.25s; }
+        .fade-in:nth-child(6) { animation-delay: 0.3s; }
+
+        /* ── SKELETON LOADER ── */
+        .skeleton {
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0.04) 25%,
+                rgba(255,255,255,0.08) 50%,
+                rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .bottom-nav { display: flex; }
+            body { padding-bottom: 84px; }
+            .action-grid { grid-template-columns: 1fr 1fr; }
+            .quick-stats { grid-template-columns: repeat(3,1fr); }
+            .main-content { padding: 1.4rem 4%; }
+            .welcome-greeting { font-size: 1.4rem; }
+            .hero-section { padding: 1.5rem; }
+            .hero-section::after { display: none; }
+            .notif-panel { width: 100%; max-width: 100vw; }
+        }
+        @media (max-width: 540px) {
+            .action-grid { grid-template-columns: 1fr; }
+            .quick-stats { grid-template-columns: 1fr 1fr; }
+            .quick-stats .stat-chip:last-child { grid-column: 1 / -1; }
+            .hero-top { flex-direction: column; }
+            .hero-status-pill { align-items: flex-start; }
+            .top-nav { padding: 0 4%; height: 56px; }
+            .user-name-short { display: none; }
+            .countdown-row { gap: 0.4rem; }
+            .cd-mini { padding: 0.4rem 0.6rem; min-width: 48px; }
+            .cd-mini .cd-num { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════ TOP NAVIGATION ═══════════ -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">TechFest 2.0</a>
+        <div class="nav-actions">
+            <button class="notif-btn" onclick="toggleNotifPanel()" aria-label="Notifications">
+                🔔
+                <span class="notif-badge" id="notifBadge">0</span>
+            </button>
+            <div style="position:relative;">
+                <div class="user-pill" id="userPill" onclick="toggleDropdown()">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span class="user-name-short" id="userNameShort">User</span>
+                </div>
+                <div class="dropdown" id="userDropdown">
+                    <div class="dropdown-header">
+                        <div class="d-name" id="dropdownName">Loading...</div>
+                        <div class="d-email" id="dropdownEmail">—</div>
+                    </div>
+                    <a href="profile.html">👤 My Profile</a>
+                    <a href="my-registration.html">📝 My Registration</a>
+                    <a href="orders.html">🛍️ My Orders</a>
+                    <div class="divider"></div>
+                    <a href="index.html">🏠 Back to Homepage</a>
+                    <div class="divider"></div>
+                    <button class="logout-btn" onclick="confirmLogout()">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════ NOTIFICATION PANEL ═══════════ -->
+    <div class="notif-overlay" id="notifOverlay" onclick="closeNotifPanel()"></div>
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-header">
+            <h3>Notifications</h3>
+            <button class="mark-read" onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div id="notifList">
+            <div class="notif-empty">No notifications yet</div>
+        </div>
+    </div>
+
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <div class="main-content">
+
+        <!-- HERO / WELCOME CARD -->
+        <div class="hero-section fade-in">
+            <div class="hero-top">
+                <div class="greeting-area">
+                    <div class="greeting-badge">⚡ FUTB · SOC-SRC · 2025</div>
+                    <h1 class="welcome-greeting" id="welcomeGreeting">Hello! 👋</h1>
+                    <p class="welcome-sub" id="welcomeSub">Loading your dashboard…</p>
+                </div>
+                <div class="hero-status-pill">
+                    <span class="status-badge pending" id="statusBadge">Pending</span>
+                    <div class="event-label" id="statusEvent">—</div>
+                </div>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="countdown-row">
+                <span class="countdown-label">Event in</span>
+                <div class="cd-mini"><div class="cd-num" id="cd-days">00</div><div class="cd-lbl">Days</div></div>
+                <div class="cd-mini"><div class="cd-num" id="cd-hours">00</div><div class="cd-lbl">Hrs</div></div>
+                <div class="cd-mini"><div class="cd-num" id="cd-mins">00</div><div class="cd-lbl">Min</div></div>
+                <div class="cd-mini"><div class="cd-num" id="cd-secs">00</div><div class="cd-lbl">Sec</div></div>
+            </div>
+        </div>
+
+        <!-- QUICK STATS -->
+        <div class="quick-stats fade-in">
+            <div class="stat-chip">
+                <div class="stat-chip-icon">🏆</div>
+                <div class="stat-chip-info">
+                    <div class="stat-chip-val">₦635k</div>
+                    <div class="stat-chip-lbl">Prize Pool</div>
+                </div>
+            </div>
+            <div class="stat-chip">
+                <div class="stat-chip-icon">📅</div>
+                <div class="stat-chip-info">
+                    <div class="stat-chip-val">2</div>
+                    <div class="stat-chip-lbl">Days Left</div>
+                </div>
+            </div>
+            <div class="stat-chip">
+                <div class="stat-chip-icon">👥</div>
+                <div class="stat-chip-info">
+                    <div class="stat-chip-val">500+</div>
+                    <div class="stat-chip-lbl">Attendees</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMPORTANT DATES -->
+        <div class="section-header fade-in">
+            <h3>Important Dates</h3>
+        </div>
+        <div class="dates-row fade-in">
+            <div class="date-chip">
+                <div class="date-chip-icon">🛒</div>
+                <div class="date-chip-info">
+                    <div class="date-chip-title">Merch Pre-order Deadline</div>
+                    <div class="date-chip-val">14 July 2025</div>
+                </div>
+            </div>
+            <div class="date-chip">
+                <div class="date-chip-icon">🚀</div>
+                <div class="date-chip-info">
+                    <div class="date-chip-title">TechFest 2.0 Opens</div>
+                    <div class="date-chip-val">21 July 2025 · 8:30 AM</div>
+                </div>
+            </div>
+            <div class="date-chip">
+                <div class="date-chip-icon">🏅</div>
+                <div class="date-chip-info">
+                    <div class="date-chip-title">Awards &amp; Close</div>
+                    <div class="date-chip-val">22 July 2025 · 5:00 PM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="section-header fade-in">
+            <h3>Quick Actions</h3>
+        </div>
+        <div class="action-grid fade-in">
+            <a href="my-registration.html" class="action-card">
+                <div class="action-icon gold">📝</div>
+                <div class="action-info">
+                    <h4>My Registration</h4>
+                    <p>View &amp; manage your event registration</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            <a href="orders.html" class="action-card">
+                <div class="action-icon blue">🛍️</div>
+                <div class="action-info">
+                    <h4>Order Merch</h4>
+                    <p>Pre-order T-shirts, caps &amp; bundles</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            <a href="payment.html" class="action-card">
+                <div class="action-icon teal">💳</div>
+                <div class="action-info">
+                    <h4>Make Payment</h4>
+                    <p>Complete payment for your orders</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            <a href="schedule.html" class="action-card">
+                <div class="action-icon purple">📅</div>
+                <div class="action-info">
+                    <h4>Event Schedule</h4>
+                    <p>Full 2-day programme &amp; timings</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            <a href="profile.html" class="action-card">
+                <div class="action-icon crimson">⚙️</div>
+                <div class="action-info">
+                    <h4>Profile Settings</h4>
+                    <p>Update your info &amp; password</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+            <a href="https://wa.me/234XXXXXXXXXX" target="_blank" class="action-card">
+                <div class="action-icon green">💬</div>
+                <div class="action-info">
+                    <h4>Contact Support</h4>
+                    <p>WhatsApp — quick response guaranteed</p>
+                </div>
+                <div class="action-arrow">→</div>
+            </a>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="section-header fade-in">
+            <h3>📢 Announcements</h3>
+            <a href="#">View all</a>
+        </div>
+        <div id="announcementsContainer" class="fade-in">
+            <div class="announcement-empty">
+                <span class="empty-icon">📭</span>
+                No announcements yet — stay tuned!
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════ BOTTOM NAV ═══════════ -->
+    <nav class="bottom-nav" id="bottomNav">
+        <a href="home.html" class="nav-active">
+            🏠<span class="nav-label">Home</span>
+        </a>
+        <a href="my-registration.html">
+            📝<span class="nav-label">Register</span>
+        </a>
+        <a href="orders.html">
+            🛍️<span class="nav-label">Orders</span>
+        </a>
+        <a href="payment.html">
+            💳<span class="nav-label">Payment</span>
+        </a>
+        <a href="profile.html">
+            👤<span class="nav-label">Profile</span>
+        </a>
+    </nav>
+
+    <!-- ═══════════ TOAST ═══════════ -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ═══════════ MODAL ═══════════ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-icon-wrap" id="modalIconWrap">
+                <span id="modalIcon">✅</span>
+            </div>
+            <h3 id="modalTitle">Success</h3>
+            <p id="modalMessage">Action completed.</p>
+            <div id="modalButtons"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════ FIREBASE SDK ═══════════ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseSignOut = signOut;
+        window.firebaseDb = db;
+        window.firebaseDoc = doc;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseCollection = collection;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseOrderBy = orderBy;
+        window.firebaseLimit = limit;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseOnSnapshot = onSnapshot;
+        console.log("✅ Firebase initialized");
+    </script>
+
+    <script>
+        let currentUser = null;
+        let userData = null;
+        const WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/JeeYoYCTGc18Au9rm299wz';
+
+        const EVENT_LABELS = {
+            hackathon: '⚙️ Hackathon',
+            showcase: '💡 Talent Showcase',
+            debate: '🎙️ Master Debate',
+            prompting: '🤖 AI Prompting',
+            spectator: '👥 Spectator'
+        };
+
+        // ── AUTH GUARD ──
+        window.firebaseAuth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+
+            // Set nav avatar & name
+            const initials = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+            const firstName = (user.displayName || 'User').split(' ')[0];
+            document.getElementById('userNameShort').textContent = firstName;
+            document.getElementById('dropdownName').textContent = user.displayName || 'User';
+            document.getElementById('dropdownEmail').textContent = user.email || '—';
+
+            await loadUserData(user);
+            loadAnnouncements();
+            loadNotifications();
+
+            setInterval(() => {
+                if (currentUser) loadNotifications();
+            }, 8000);
+
+            checkWelcomeModal();
+        });
+
+        // ── LOAD USER DATA ──
+        async function loadUserData(user) {
+            try {
+                const docSnap = await window.firebaseGetDoc(
+                    window.firebaseDoc(window.firebaseDb, 'registrations', user.uid)
+                );
+                if (docSnap.exists()) {
+                    userData = docSnap.data();
+                    updateDashboardUI(userData, user);
+                } else {
+                    document.getElementById('welcomeGreeting').textContent = 'Welcome! 👋';
+                    document.getElementById('welcomeSub').textContent = 'You haven\'t registered yet. Head to the homepage to register.';
+                    document.getElementById('statusEvent').textContent = 'Not Registered';
+                    document.getElementById('statusBadge').textContent = 'None';
+                    document.getElementById('statusBadge').className = 'status-badge pending';
+                }
+            } catch (err) {
+                console.error('Error loading user data:', err);
+                showToast('Failed to load your data. Please refresh.');
+            }
+        }
+
+        function updateDashboardUI(data, user) {
+            const name = data.fullName || user.displayName || 'User';
+            const firstName = name.split(' ')[0];
+            document.getElementById('welcomeGreeting').textContent = `Hello, ${firstName}! 👋`;
+            document.getElementById('welcomeSub').textContent = 'Here\'s your TechFest 2.0 dashboard';
+            document.getElementById('userNameShort').textContent = firstName;
+            document.getElementById('dropdownName').textContent = name;
+
+            document.getElementById('statusEvent').textContent = EVENT_LABELS[data.eventType] || 'Event';
+
+            const badge = document.getElementById('statusBadge');
+            const status = (data.status || 'pending').toLowerCase();
+            badge.textContent = capitalise(status);
+            badge.className = 'status-badge ' + status;
+        }
+
+        function capitalise(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // ── COUNTDOWN ──
+        function updateCountdown() {
+            const target = new Date("2025-07-21T08:30:00");
+            const diff = target - new Date();
+            if (diff <= 0) {
+                ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00');
+                return;
+            }
+            document.getElementById('cd-days').textContent  = String(Math.floor(diff / 86400000)).padStart(2,'0');
+            document.getElementById('cd-hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+            document.getElementById('cd-mins').textContent  = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+            document.getElementById('cd-secs').textContent  = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // ── WELCOME MODAL (new users) ──
+        function checkWelcomeModal() {
+            if (!userData) return;
+            const createdAt = userData.createdAt?.toDate?.() || new Date();
+            const diffMinutes = (new Date() - createdAt) / 60000;
+            const shown = sessionStorage.getItem('welcome_modal_shown');
+            if (diffMinutes < 10 && !shown) {
+                sessionStorage.setItem('welcome_modal_shown', 'true');
+                const name = (userData.fullName || currentUser.displayName || 'User').split(' ')[0];
+                setTimeout(() => showWelcomeModal(name), 600);
+            } else if (!shown) {
+                const name = (userData.fullName || currentUser.displayName || 'User').split(' ')[0];
+                const status = userData.status || 'pending';
+                const eventName = EVENT_LABELS[userData.eventType] || 'Unknown Event';
+                setTimeout(() => showReturningModal(name, eventName, status), 800);
+            }
+        }
+
+        function showWelcomeModal(name) {
+            document.getElementById('modalIconWrap').className = 'modal-icon-wrap success';
+            document.getElementById('modalIcon').textContent = '🎉';
+            document.getElementById('modalTitle').textContent = `Welcome, ${name}!`;
+            document.getElementById('modalMessage').innerHTML = `
+                Your registration is confirmed. Here's what to do next:<br><br>
+                ✅ Complete your profile<br>
+                ✅ Pre-order your official merchandise<br>
+                ✅ Join the WhatsApp group for live updates
+            `;
+            document.getElementById('modalButtons').innerHTML = `
+                <a href="${WHATSAPP_GROUP_LINK}" target="_blank" class="modal-btn modal-btn-wa">
+                    📱 Join Official WhatsApp Group
+                </a>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()">Let's Go! →</button>
+            `;
+            openModal();
+        }
+
+        function showReturningModal(name, eventName, status) {
+            document.getElementById('modalIconWrap').className = 'modal-icon-wrap info';
+            document.getElementById('modalIcon').textContent = '👋';
+            document.getElementById('modalTitle').textContent = `Welcome back, ${name}!`;
+            document.getElementById('modalMessage').innerHTML = `
+                <strong>Event:</strong> ${eventName}<br>
+                <strong>Status:</strong> <span style="color:var(--gold-light);text-transform:capitalize;">${status}</span><br><br>
+                Stay connected for important updates and announcements.
+            `;
+            document.getElementById('modalButtons').innerHTML = `
+                <a href="${WHATSAPP_GROUP_LINK}" target="_blank" class="modal-btn modal-btn-wa">
+                    📱 Join Community for Updates
+                </a>
+                <button class="modal-btn modal-btn-primary" onclick="closeModal()">Continue to Dashboard</button>
+            `;
+            openModal();
+        }
+
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function showModal(title, message, type = 'success', buttons = '') {
+            const iconWrap = document.getElementById('modalIconWrap');
+            iconWrap.className = 'modal-icon-wrap ' + type;
+            const icons = { success: '✅', info: 'ℹ️', warning: '⚠️' };
+            document.getElementById('modalIcon').textContent = icons[type] || '✅';
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').innerHTML = message;
+            document.getElementById('modalButtons').innerHTML = buttons ||
+                '<button class="modal-btn modal-btn-primary" onclick="closeModal()">Got It</button>';
+            openModal();
+        }
+        document.getElementById('modalOverlay').addEventListener('click', e => {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        // ── DROPDOWN ──
+        function toggleDropdown() {
+            document.getElementById('userDropdown').classList.toggle('active');
+        }
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.user-pill') && !e.target.closest('.dropdown')) {
+                document.getElementById('userDropdown').classList.remove('active');
+            }
+        });
+
+        // ── NOTIFICATIONS ──
+        function toggleNotifPanel() {
+            const panel = document.getElementById('notifPanel');
+            const overlay = document.getElementById('notifOverlay');
+            const isOpen = panel.classList.toggle('open');
+            overlay.classList.toggle('active', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+        function closeNotifPanel() {
+            document.getElementById('notifPanel').classList.remove('open');
+            document.getElementById('notifOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function markAllRead() {
+            document.querySelectorAll('.notif-item').forEach(i => i.classList.add('read'));
+            document.getElementById('notifBadge').classList.remove('show');
+        }
+
+        // ── LOGOUT ──
+        function confirmLogout() {
+            document.getElementById('userDropdown').classList.remove('active');
+            showModal(
+                'Confirm Logout',
+                'Are you sure you want to logout from your dashboard?',
+                'warning',
+                `<button class="modal-btn modal-btn-primary" onclick="performLogout()" style="margin-right:0.6rem">Yes, Logout</button>
+                 <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>`
+            );
+        }
+        async function performLogout() {
+            try {
+                await window.firebaseSignOut(window.firebaseAuth);
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error('Logout error:', err);
+                showToast('Failed to logout. Please try again.');
+            }
+        }
+
+        // ── TOAST ──
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // ── ANNOUNCEMENTS ──
+        async function loadAnnouncements() {
+            const container = document.getElementById('announcementsContainer');
+            const icons = ['📌', '🔔', '⚡', '📣', '🚨'];
+            try {
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'announcements'),
+                    window.firebaseOrderBy('createdAt', 'desc'),
+                    window.firebaseLimit(5)
+                );
+                const snapshot = await window.firebaseGetDocs(q);
+                if (snapshot.empty) return;
+                let html = '';
+                let i = 0;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt?.toDate?.() || new Date();
+                    html += `
+                    <div class="announcement-card">
+                        <div class="ann-icon">${icons[i % icons.length]}</div>
+                        <div class="ann-body">
+                            <div class="ann-date">${date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+                            <h4>${data.title || 'Announcement'}</h4>
+                            <p>${(data.content || '').substring(0,160)}${(data.content||'').length > 160 ? '…' : ''}</p>
+                        </div>
+                    </div>`;
+                    i++;
+                });
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Error loading announcements:', err);
+            }
+        }
+
+        // ── NOTIFICATIONS ──
+        async function loadNotifications() {
+            if (!currentUser) return;
+            try {
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'notifications'),
+                    window.firebaseWhere('uid', '==', currentUser.uid),
+                    window.firebaseOrderBy('createdAt', 'desc'),
+                    window.firebaseLimit(20)
+                );
+                const snapshot = await window.firebaseGetDocs(q);
+                const notifList = document.getElementById('notifList');
+                const badge = document.getElementById('notifBadge');
+                if (snapshot.empty) {
+                    notifList.innerHTML = '<div class="notif-empty">No notifications yet</div>';
+                    return;
+                }
+                let unread = 0, html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isRead = data.read || false;
+                    if (!isRead) unread++;
+                    const time = data.createdAt?.toDate?.() || new Date();
+                    html += `
+                    <div class="notif-item ${isRead ? 'read' : ''}" onclick="this.classList.add('read')">
+                        <div class="notif-dot"></div>
+                        <div class="notif-content">
+                            <p>${data.message || 'Notification'}</p>
+                            <div class="time">${timeAgo(time)}</div>
+                        </div>
+                    </div>`;
+                });
+                notifList.innerHTML = html;
+                if (unread > 0) {
+                    badge.textContent = unread > 9 ? '9+' : unread;
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+            } catch (err) {
+                console.error('Error loading notifications:', err);
+            }
+        }
+
+        function timeAgo(date) {
+            const s = Math.floor((new Date() - date) / 1000);
+            if (s < 60) return 'Just now';
+            if (s < 3600) return Math.floor(s / 60) + 'm ago';
+            if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+            return Math.floor(s / 86400) + 'd ago';
+        }
+    </script>
+</body>
+</html>
