@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — FUTB TechFest 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue:#060E1A;--navy:#0B1D3A;--navy-light:#142D5E;
+            --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#CCFBF1;
+            --sky:#38BDF8;--sky-light:#7DD3FC;--sky-pale:#E0F2FE;
+            --white:#FFFFFF;--crimson:#EF4444;--green:#10B981;--orange:#F59E0B;
+            --card:rgba(11,29,58,0.55);--glass:rgba(255,255,255,0.04);
+            --border:rgba(56,189,248,0.2);--border-teal:rgba(20,184,166,0.4);
+            --text:#E2E8F0;--text-bright:#F8FAFC;--muted:#94A3B8;--muted-light:#CBD5E1;
+            --shadow-teal:0 0 30px rgba(20,184,166,0.15);
+            --shadow-card:0 8px 40px rgba(0,0,0,0.3);
+            --radius-sm:8px;--radius:12px;--radius-lg:20px;
+            --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{
+            font-family:'Space Grotesk',sans-serif;background:var(--deep-blue);color:var(--text);
+            min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;
+            -webkit-font-smoothing:antialiased;position:relative;
+        }
+        body::before{
+            content:'';position:fixed;inset:0;
+            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none;z-index:0;opacity:0.3;
+        }
+        body::after{
+            content:'';position:fixed;inset:0;
+            background:radial-gradient(ellipse at 50% 30%,rgba(56,189,248,0.12) 0%,transparent 60%),
+                       radial-gradient(ellipse at 80% 100%,rgba(20,184,166,0.08) 0%,transparent 50%);
+            pointer-events:none;z-index:0;
+        }
+        .login-container{
+            position:relative;z-index:1;width:100%;max-width:440px;background:var(--card);
+            border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;
+            backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--shadow-card);
+        }
+        .login-header{text-align:center;margin-bottom:2.5rem}
+        .login-logo{
+            font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:0.08em;
+            background:linear-gradient(135deg,var(--teal-light),var(--sky-light));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-clip:text;text-decoration:none;display:inline-block;margin-bottom:0.5rem;
+        }
+        .admin-badge{
+            display:inline-block;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+            padding:0.25rem 0.8rem;border-radius:100px;font-size:0.62rem;font-weight:700;
+            letter-spacing:0.12em;text-transform:uppercase;color:var(--crimson);
+            font-family:'JetBrains Mono',monospace;margin-bottom:0.8rem;
+        }
+        .login-header h2{font-size:1.4rem;font-weight:700;color:var(--text-bright);margin-bottom:0.3rem}
+        .login-header p{font-size:0.82rem;color:var(--muted);line-height:1.5}
+        .form-group{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1.2rem}
+        .form-group label{font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+        .form-group input{
+            background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.12);
+            color:var(--text-bright);padding:0.8rem 1rem;border-radius:var(--radius-sm);
+            font-size:0.9rem;font-family:'Space Grotesk',sans-serif;transition:all var(--transition);width:100%;
+        }
+        .form-group input:focus{outline:none;border-color:var(--teal-light);box-shadow:0 0 0 3px rgba(20,184,166,0.1)}
+        .form-group input.error{border-color:var(--crimson);box-shadow:0 0 0 3px rgba(239,68,68,0.1)}
+        .error-msg{font-size:0.7rem;color:var(--crimson);display:none;letter-spacing:0.03em}
+        .error-msg.show{display:block}
+        .password-wrap{position:relative}
+        .password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:4px;transition:color var(--transition);z-index:2}
+        .password-toggle:hover{color:var(--text-bright)}
+        .btn-login{
+            background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);
+            padding:0.9rem 2rem;border-radius:100px;font-weight:700;font-size:0.95rem;
+            border:none;cursor:pointer;letter-spacing:0.04em;transition:all var(--transition);
+            font-family:'Space Grotesk',sans-serif;box-shadow:0 6px 25px rgba(20,184,166,0.3);
+            width:100%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:0.5rem;
+        }
+        .btn-login:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 35px rgba(20,184,166,0.45)}
+        .btn-login:disabled{opacity:0.5;cursor:not-allowed}
+        .btn-spinner{display:none;width:20px;height:20px;border:2.5px solid transparent;border-top-color:var(--white);border-radius:50%;animation:spin 0.7s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .attempts-warning{text-align:center;margin-top:1rem;font-size:0.72rem;color:#FBBF24;display:none}
+        .attempts-warning.show{display:block}
+        .back-home-link{text-align:center;margin-top:1.2rem;font-size:0.78rem}
+        .back-home-link a{color:var(--muted);text-decoration:none;transition:color var(--transition)}
+        .back-home-link a:hover{color:var(--text-bright)}
+        .modal-overlay{
+            position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);
+            backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+            opacity:0;visibility:hidden;transition:all var(--transition);padding:1rem;
+        }
+        .modal-overlay.active{opacity:1;visibility:visible}
+        .modal-box{
+            background:var(--navy);border:1px solid var(--border-teal);border-radius:var(--radius-lg);
+            padding:2.5rem 2rem;max-width:440px;width:100%;text-align:center;position:relative;
+            box-shadow:0 30px 70px rgba(0,0,0,0.6);transform:translateY(20px);
+            transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+        .modal-overlay.active .modal-box{transform:translateY(0)}
+        .modal-icon-wrap{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:2rem}
+        .modal-icon-wrap.success{background:rgba(16,185,129,0.12);border:2px solid rgba(16,185,129,0.3)}
+        .modal-icon-wrap.error{background:rgba(239,68,68,0.12);border:2px solid rgba(239,68,68,0.3)}
+        .modal-icon-wrap.info{background:rgba(56,189,248,0.12);border:2px solid rgba(56,189,248,0.3)}
+        .modal-box h3{font-size:1.3rem;font-weight:700;margin-bottom:0.6rem;color:var(--text-bright)}
+        .modal-box p{color:var(--muted-light);font-size:0.88rem;line-height:1.7;margin-bottom:1.5rem}
+        .modal-close{position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+        .modal-close:hover{color:var(--text-bright);background:rgba(255,255,255,0.06)}
+        .modal-btn{padding:0.8rem 2rem;border-radius:100px;font-weight:700;font-size:0.9rem;cursor:pointer;border:none;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif}
+        .modal-btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);box-shadow:0 6px 25px rgba(20,184,166,0.3)}
+        .modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(20,184,166,0.5)}
+        @media(max-width:480px){body{padding:1rem}.login-container{padding:1.8rem 1.3rem;border-radius:var(--radius)}.login-logo{font-size:1.5rem}.login-header h2{font-size:1.2rem}}
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <a href="index.html" class="login-logo">TechFest 2.0</a>
+            <div class="admin-badge">🔐 Admin Panel</div>
+            <h2>Admin Login</h2>
+            <p>Authorized personnel only. All login attempts are logged.</p>
+        </div>
+
+        <div class="form-group">
+            <label>Admin Email</label>
+            <input type="email" id="adminEmail" placeholder="admin@techfest.com" autocomplete="email">
+            <span class="error-msg" id="err-email">Please enter a valid email</span>
+        </div>
+
+        <div class="form-group">
+            <label>Admin Password</label>
+            <div class="password-wrap">
+                <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
+                <button type="button" class="password-toggle" id="pwToggle">👁️</button>
+            </div>
+            <span class="error-msg" id="err-password">Password is required</span>
+        </div>
+
+        <button class="btn-login" id="loginBtn"><span class="btn-spinner" id="loginSpinner"></span>Login to Admin Panel</button>
+
+        <p class="attempts-warning" id="attemptsWarning">⚠️ Too many failed attempts. Please wait 15 minutes.</p>
+
+        <div class="back-home-link"><a href="index.html">← Back to Homepage</a></div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="modalCloseBtn">✕</button>
+            <div class="modal-icon-wrap" id="modalIconWrap"><span id="modalIcon">✅</span></div>
+            <h3 id="modalTitle">Success</h3>
+            <p id="modalMessage">Action completed.</p>
+            <button class="modal-btn modal-btn-primary" id="modalBtn">Got It</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ✅ EXPOSE ALL FUNCTIONS TO GLOBAL SCOPE
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseSignInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.firebaseSignOut = signOut;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseDoc = doc;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        console.log("✅ Firebase Admin Auth initialized");
+    </script>
+
+    <script>
+        const MAX_ATTEMPTS = 5;
+        const LOCKOUT_MINUTES = 15;
+
+        const adminEmail = document.getElementById('adminEmail');
+        const adminPassword = document.getElementById('adminPassword');
+        const errEmail = document.getElementById('err-email');
+        const errPassword = document.getElementById('err-password');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const attemptsWarning = document.getElementById('attemptsWarning');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalIconWrap = document.getElementById('modalIconWrap');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalBtn = document.getElementById('modalBtn');
+
+        // ═══════════ WAIT FOR FIREBASE ═══════════
+        function waitForFirebase(cb) {
+            if (window.firebaseOnAuthStateChanged && window.firebaseAuth) { cb(); }
+            else { setTimeout(() => waitForFirebase(cb), 150); }
+        }
+
+        // ═══════════ PASSWORD TOGGLE ═══════════
+        document.getElementById('pwToggle').addEventListener('click', function() {
+            adminPassword.type = adminPassword.type === 'password' ? 'text' : 'password';
+            this.textContent = adminPassword.type === 'password' ? '👁️' : '🙈';
+        });
+
+        // ═══════════ BRUTE FORCE PROTECTION ═══════════
+        function getAttemptData() {
+            const data = sessionStorage.getItem('admin_login_attempts');
+            return data ? JSON.parse(data) : { count: 0, lockUntil: null };
+        }
+        function saveAttemptData(data) { sessionStorage.setItem('admin_login_attempts', JSON.stringify(data)); }
+        function isLockedOut() {
+            const data = getAttemptData();
+            if (data.lockUntil && new Date().getTime() < data.lockUntil) return true;
+            if (data.lockUntil && new Date().getTime() >= data.lockUntil) { saveAttemptData({ count: 0, lockUntil: null }); return false; }
+            return false;
+        }
+        function recordFailedAttempt() {
+            let data = getAttemptData();
+            data.count++;
+            if (data.count >= MAX_ATTEMPTS) { 
+                data.lockUntil = new Date().getTime() + LOCKOUT_MINUTES * 60 * 1000;
+                showAttemptsWarning(true); 
+            } else { 
+                showAttemptsWarning(false); 
+            }
+            saveAttemptData(data);
+        }
+        function showAttemptsWarning(show) {
+            if (show) { 
+                const data = getAttemptData(); 
+                const mins = Math.ceil((data.lockUntil - new Date().getTime()) / 60000);
+                attemptsWarning.textContent = '⚠️ Too many failed attempts. Please wait ' + mins + ' minute(s).';
+                attemptsWarning.classList.add('show');
+                loginBtn.disabled = true; 
+            } else { 
+                attemptsWarning.classList.remove('show');
+                loginBtn.disabled = false; 
+            }
+        }
+
+        if (isLockedOut()) showAttemptsWarning(true);
+
+        // ═══════════ AUTO-REDIRECT IF LOGGED IN ═══════════
+        waitForFirebase(() => {
+            window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (user) {
+                    console.log('🔍 User already logged in, checking admin role...');
+                    const adminDoc = await window.firebaseGetDoc(window.firebaseDoc(window.firebaseDb, 'admins', user.uid));
+                    if (adminDoc.exists() && adminDoc.data().role === 'admin') {
+                        console.log('✅ Admin verified → redirecting to admin.html');
+                        window.location.href = 'admin.html';
+                    } else {
+                        console.log('⚠️ Logged in user is not admin — signing out');
+                        await window.firebaseSignOut(window.firebaseAuth);
+                    }
+                }
+            });
+        });
+
+        // ═══════════ VALIDATION ═══════════
+        function showFieldError(input, err, show) { 
+            if (show) { input.classList.add('error'); err.classList.add('show'); } 
+            else { input.classList.remove('error'); err.classList.remove('show'); } 
+        }
+        function validateForm() { 
+            let valid = true; 
+            const email = adminEmail.value.trim(); 
+            const pw = adminPassword.value; 
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { 
+                showFieldError(adminEmail, errEmail, true);
+                valid = false; 
+            } else showFieldError(adminEmail, errEmail, false); 
+            if (!pw) { 
+                showFieldError(adminPassword, errPassword, true);
+                valid = false; 
+            } else showFieldError(adminPassword, errPassword, false); 
+            return valid; 
+        }
+
+        // ═══════════ LOGIN ═══════════
+        async function handleLogin() {
+            if (!validateForm()) return;
+            if (isLockedOut()) { showAttemptsWarning(true); return; }
+
+            loginBtn.disabled = true;
+            loginSpinner.style.display = 'inline-block';
+            const email = adminEmail.value.trim();
+            const password = adminPassword.value;
+
+            try {
+                console.log('🔐 Attempting admin login:', email);
+                const uc = await window.firebaseSignInWithEmailAndPassword(window.firebaseAuth, email, password);
+                const user = uc.user;
+                console.log('✅ Firebase Auth success:', user.uid);
+
+                // ═══════════ VERIFY ADMIN ROLE IN FIRESTORE ═══════════
+                console.log('🔍 Checking admin role in Firestore: admins/' + user.uid);
+                const adminDoc = await window.firebaseGetDoc(window.firebaseDoc(window.firebaseDb, 'admins', user.uid));
+
+                if (!adminDoc.exists()) {
+                    console.error('❌ No admin document found for:', user.uid);
+                    await window.firebaseSignOut(window.firebaseAuth);
+                    loginBtn.disabled = false;
+                    loginSpinner.style.display = 'none';
+                    recordFailedAttempt();
+                    showModal('Access Denied', 'No admin account found. You must create an admin document in Firestore first.<br><br>Go to Firestore → admins → create document with ID: <strong>' + user.uid + '</strong> and add field <strong>role: "admin"</strong>', 'error');
+                    return;
+                }
+
+                if (adminDoc.data().role !== 'admin') {
+                    console.error('❌ User exists in admins but role is not admin:', adminDoc.data().role);
+                    await window.firebaseSignOut(window.firebaseAuth);
+                    loginBtn.disabled = false;
+                    loginSpinner.style.display = 'none';
+                    recordFailedAttempt();
+                    showModal('Access Denied', 'Your account does not have admin privileges. Role found: <strong>' + (adminDoc.data().role || 'none') + '</strong>', 'error');
+                    return;
+                }
+
+                console.log('✅ Admin verified — redirecting');
+                saveAttemptData({ count: 0, lockUntil: null });
+                showModal('Login Successful! 🎉', 'Welcome to the Admin Panel, <strong>' + (adminDoc.data().name || 'Admin') + '</strong>! Redirecting...', 'success');
+                setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
+
+            } catch (error) {
+                console.error('❌ Login error:', error.code, error.message);
+                loginBtn.disabled = false;
+                loginSpinner.style.display = 'none';
+                recordFailedAttempt();
+
+                let title = 'Login Failed', msg = '', type = 'error';
+                switch (error.code) {
+                    case 'auth/invalid-credential': 
+                    case 'auth/user-not-found': 
+                    case 'auth/wrong-password':
+                        title = 'Invalid Credentials';
+                        msg = 'The email or password is incorrect. Attempt ' + getAttemptData().count + ' of ' + MAX_ATTEMPTS + '.';
+                        showFieldError(adminEmail, errEmail, true);
+                        errEmail.textContent = 'Invalid email or password';
+                        break;
+                    case 'auth/invalid-email': 
+                        title = 'Invalid Email';
+                        msg = 'Please enter a valid email address.'; 
+                        break;
+                    case 'auth/too-many-requests': 
+                        title = 'Too Many Attempts';
+                        msg = 'Too many failed attempts. Please wait and try again.'; 
+                        break;
+                    case 'auth/network-request-failed': 
+                        title = 'Network Error';
+                        msg = 'Unable to connect. Check your internet.'; 
+                        break;
+                    case 'auth/operation-not-allowed':
+                        title = 'Login Disabled';
+                        msg = 'Email/Password sign-in is not enabled in Firebase Console.'; 
+                        break;
+                    default: 
+                        msg = error.message || 'An unexpected error occurred.'; 
+                        break;
+                }
+                showModal(title, msg, type);
+            }
+        }
+
+        // ═══════════ MODAL ═══════════
+        function showModal(title, msg, type = 'success') {
+            modalIconWrap.className = 'modal-icon-wrap ' + type;
+            modalIcon.textContent = { success: '✅', error: '❌', info: 'ℹ️' } [type] || '✅';
+            modalTitle.textContent = title;
+            modalMessage.innerHTML = msg;
+            modalBtn.textContent = type === 'success' ? 'Got It' : 'Try Again';
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() { 
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = ''; 
+        }
+
+        // ═══════════ EVENT LISTENERS ═══════════
+        document.getElementById('loginBtn').addEventListener('click', handleLogin);
+        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+        document.getElementById('modalBtn').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Enter' && document.activeElement && document.activeElement.closest('.login-container')) { 
+                e.preventDefault();
+                handleLogin(); 
+            }
+        });
+
+        console.log('✅ Admin Login page ready');
+        console.log('📋 Brute force protection: ' + MAX_ATTEMPTS + ' attempts, ' + LOCKOUT_MINUTES + ' min lockout');
+        console.log('⚠️ Make sure you have an admin document in Firestore: admins/{your-uid} with role: "admin"');
+    </script>
+</body>
+</html>
