@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Merchandise — FUTB TechFest 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue:#060E1A;--navy:#0B1D3A;--navy-light:#142D5E;
+            --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#CCFBF1;
+            --sky:#38BDF8;--sky-light:#7DD3FC;--sky-pale:#E0F2FE;
+            --white:#FFFFFF;--crimson:#EF4444;--green:#10B981;--orange:#F59E0B;
+            --card:rgba(11,29,58,0.55);--glass:rgba(255,255,255,0.04);
+            --border:rgba(56,189,248,0.2);--border-teal:rgba(20,184,166,0.4);
+            --text:#E2E8F0;--text-bright:#F8FAFC;--muted:#94A3B8;--muted-light:#CBD5E1;
+            --shadow-teal:0 0 30px rgba(20,184,166,0.15);
+            --shadow-card:0 8px 40px rgba(0,0,0,0.3);
+            --radius-sm:8px;--radius:12px;--radius-lg:20px;
+            --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--teal) var(--deep-blue)}
+        html::-webkit-scrollbar{width:6px}
+        html::-webkit-scrollbar-track{background:var(--deep-blue)}
+        html::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px}
+        body{
+            font-family:'Space Grotesk',sans-serif;background:var(--deep-blue);color:var(--text);
+            min-height:100vh;-webkit-font-smoothing:antialiased;padding-bottom:90px;position:relative;
+        }
+        body::before{
+            content:'';position:fixed;inset:0;
+            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none;z-index:0;opacity:0.3;
+        }
+        .top-nav{
+            position:sticky;top:0;z-index:100;background:rgba(6,14,26,0.85);
+            backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 5%;
+            display:flex;align-items:center;justify-content:space-between;height:64px;
+        }
+        .nav-left{display:flex;align-items:center;gap:1rem}
+        .back-btn{color:var(--muted);text-decoration:none;font-size:0.82rem;font-weight:500;letter-spacing:0.04em;transition:color var(--transition);display:flex;align-items:center;gap:0.3rem}
+        .back-btn:hover{color:var(--teal-light)}
+        .nav-logo{font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--teal-light),var(--sky-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+        .user-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;font-family:'JetBrains Mono',monospace;border:2px solid transparent;cursor:pointer;transition:all var(--transition);text-decoration:none}
+        .user-avatar:hover{border-color:var(--teal-light);box-shadow:0 0 20px rgba(20,184,166,0.3)}
+        .main-content{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:2rem 5%}
+        .page-title{font-size:1.4rem;font-weight:700;color:var(--text-bright);margin-bottom:0.3rem}
+        .page-subtitle{font-size:0.82rem;color:var(--muted);margin-bottom:0.8rem}
+        .deadline-banner{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.78rem;color:#FBBF24;margin-bottom:2rem;display:flex;align-items:center;gap:0.5rem}
+        .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2.5rem}
+        .product-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;transition:all var(--transition);display:flex;flex-direction:column}
+        .product-card:hover{border-color:var(--border-teal);transform:translateY(-4px);box-shadow:var(--shadow-card)}
+        .product-card img{width:100%;height:160px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:1rem;border:1px solid var(--border)}
+        .product-card h3{font-size:1rem;font-weight:700;color:var(--text-bright);margin-bottom:0.3rem}
+        .product-card .product-desc{font-size:0.76rem;color:var(--muted-light);line-height:1.5;margin-bottom:0.3rem;flex:1}
+        .product-card .product-note{font-size:0.68rem;color:var(--teal-light);margin-bottom:0.8rem;font-style:italic}
+        .product-price{font-family:'Bebas Neue',cursive;font-size:2.2rem;color:var(--teal-light);margin-bottom:1rem;letter-spacing:0.03em}
+        .btn-order{background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);padding:0.7rem 1.5rem;border-radius:100px;font-weight:700;font-size:0.82rem;border:none;cursor:pointer;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;width:100%;box-shadow:0 4px 20px rgba(20,184,166,0.2)}
+        .btn-order:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(20,184,166,0.4)}
+        .section-header{margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+        .section-header h3{font-size:1rem;font-weight:700;color:var(--text-bright)}
+        .order-count-badge{background:rgba(20,184,166,0.12);border:1px solid var(--border-teal);color:var(--teal-light);padding:0.25rem 0.8rem;border-radius:100px;font-size:0.7rem;font-weight:600;font-family:'JetBrains Mono',monospace}
+        .order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.5rem;margin-bottom:0.8rem;transition:all var(--transition)}
+        .order-card:hover{border-color:var(--border-teal)}
+        .order-card.my-order{border-left:3px solid var(--teal-light)}
+        .order-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.8rem;margin-bottom:0.6rem}
+        .order-id{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--teal-light);font-weight:500}
+        .order-date{font-size:0.7rem;color:var(--muted)}
+        .order-body{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+        .order-icon{font-size:2rem}
+        .order-info h4{font-size:0.88rem;font-weight:600;color:var(--text-bright)}
+        .order-info .order-meta{font-size:0.74rem;color:var(--muted-light);margin-top:0.2rem}
+        .order-info .custom-name-preview{display:inline-block;background:rgba(20,184,166,0.1);border:1px dashed var(--border-teal);padding:0.15rem 0.5rem;border-radius:4px;font-size:0.7rem;color:var(--teal-light);font-style:italic;margin-top:0.2rem}
+        .order-info .order-by{font-size:0.68rem;color:var(--muted);margin-top:0.2rem;font-style:italic}
+        .order-price{font-family:'Bebas Neue',cursive;font-size:1.5rem;color:var(--teal-light);text-align:right}
+        .order-actions{display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap}
+        .status-badge{padding:0.3rem 0.8rem;border-radius:100px;font-size:0.66rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase}
+        .status-pending{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#FBBF24}
+        .status-proof{background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:#7DD3FC}
+        .status-confirmed{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7}
+        .status-delivered{background:rgba(20,184,166,0.12);border:1px solid rgba(20,184,166,0.3);color:#5EEAD4}
+        .status-cancelled{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
+        .btn-sm{padding:0.45rem 1rem;border-radius:100px;font-weight:600;font-size:0.72rem;cursor:pointer;border:none;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;text-decoration:none;display:inline-block}
+        .btn-pay{background:var(--teal-light);color:var(--white)}
+        .btn-pay:hover{background:var(--teal);transform:translateY(-1px)}
+        .btn-outline-order{background:transparent;border:1.5px solid rgba(148,163,184,0.3);color:var(--text-bright);padding:0.7rem 1.5rem;border-radius:100px;font-weight:700;font-size:0.82rem;cursor:pointer;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;width:100%;box-shadow:none}
+        .btn-outline-order:hover{border-color:var(--teal-light);color:var(--teal-light);background:rgba(20,184,166,0.06)}
+        .btn-cancel-order{background:transparent;border:1px solid rgba(239,68,68,0.4);color:var(--crimson)}
+        .btn-cancel-order:hover{background:rgba(239,68,68,0.08)}
+        .wa-banner{background:rgba(37,211,102,0.06);border:1px solid rgba(37,211,102,0.25);border-radius:var(--radius);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:2rem}
+        .wa-banner p{font-size:0.82rem;color:var(--muted-light)}
+        .btn-wa{background:#25D366;color:white;padding:0.6rem 1.5rem;border-radius:100px;font-weight:700;font-size:0.8rem;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;letter-spacing:0.04em;transition:all var(--transition)}
+        .btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,211,102,0.4)}
+        .empty-state{text-align:center;padding:3rem 2rem;color:var(--muted)}
+        .empty-state .empty-icon{font-size:3rem;margin-bottom:1rem}
+        .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(6,14,26,0.92);backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:0.6rem 5%;justify-content:space-around;align-items:center}
+        .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:0.25rem;text-decoration:none;color:var(--muted);font-size:1.3rem;transition:all var(--transition);padding:0.3rem 0.6rem;border-radius:var(--radius-sm)}
+        .bottom-nav a.active{color:var(--teal-light);background:rgba(20,184,166,0.1)}
+        .bottom-nav a span{font-size:0.6rem;letter-spacing:0.05em;font-weight:500}
+        .modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all var(--transition);padding:1rem}
+        .modal-overlay.active{opacity:1;visibility:visible}
+        .modal-box{background:var(--navy);border:1px solid var(--border-teal);border-radius:var(--radius-lg);padding:2rem 1.8rem;max-width:480px;width:100%;position:relative;box-shadow:0 30px 70px rgba(0,0,0,0.6);transform:translateY(20px);transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);max-height:90vh;overflow-y:auto}
+        .modal-overlay.active .modal-box{transform:translateY(0)}
+        .modal-close{position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+        .modal-close:hover{color:var(--text-bright);background:rgba(255,255,255,0.06)}
+        .modal-icon-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem}
+        .modal-icon-wrap.success{background:rgba(16,185,129,0.12);border:2px solid rgba(16,185,129,0.3)}
+        .modal-icon-wrap.warning{background:rgba(245,158,11,0.12);border:2px solid rgba(245,158,11,0.3)}
+        .modal-icon-wrap.error{background:rgba(239,68,68,0.12);border:2px solid rgba(239,68,68,0.3)}
+        .modal-box h3{font-size:1.2rem;font-weight:700;margin-bottom:0.4rem;color:var(--text-bright);text-align:center}
+        .modal-box .modal-subtitle{color:var(--muted-light);font-size:0.8rem;text-align:center;margin-bottom:1.5rem}
+        .modal-btn{padding:0.75rem 1.8rem;border-radius:100px;font-weight:700;font-size:0.85rem;cursor:pointer;border:none;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;display:inline-block;text-decoration:none}
+        .modal-btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);box-shadow:0 6px 25px rgba(20,184,166,0.3);width:100%}
+        .modal-btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 35px rgba(20,184,166,0.5)}
+        .modal-btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+        .modal-btn-secondary{background:transparent;border:1.5px solid rgba(148,163,184,0.3);color:var(--text-bright);width:100%;margin-top:0.5rem}
+        .modal-btn-secondary:hover{border-color:var(--teal-light);color:var(--teal-light)}
+        .btn-spinner{display:none;width:18px;height:18px;border:2.5px solid transparent;border-top-color:var(--white);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:0.5rem;vertical-align:middle}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .form-group{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem}
+        .form-group label{font-size:0.7rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)}
+        .form-group select,.form-group input{background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.12);color:var(--text-bright);padding:0.65rem 0.9rem;border-radius:var(--radius-sm);font-size:0.85rem;font-family:'Space Grotesk',sans-serif;transition:all var(--transition);width:100%}
+        .form-group select:focus,.form-group input:focus{outline:none;border-color:var(--teal-light);box-shadow:0 0 0 3px rgba(20,184,166,0.1)}
+        .form-group select option{background:var(--navy);color:var(--text-bright)}
+        .qty-selector{display:flex;align-items:center;gap:0.5rem}
+        .qty-btn{width:36px;height:36px;border-radius:50%;background:var(--glass);border:1px solid var(--border);color:var(--text-bright);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+        .qty-btn:hover{border-color:var(--teal-light);color:var(--teal-light)}
+        .qty-display{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--text-bright);min-width:30px;text-align:center}
+        .order-summary-box{background:rgba(20,184,166,0.06);border:1px solid var(--border-teal);border-radius:var(--radius-sm);padding:1rem;margin:1rem 0}
+        .summary-row{display:flex;justify-content:space-between;font-size:0.8rem;padding:0.35rem 0}
+        .summary-row.total{font-weight:700;font-size:0.9rem;border-top:1px solid var(--border);padding-top:0.6rem;margin-top:0.3rem;color:var(--teal-light)}
+        .custom-name-preview-box{background:rgba(0,0,0,0.3);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:0.8rem;text-align:center;margin-top:0.5rem;font-family:'Bebas Neue',cursive;font-size:1.2rem;color:var(--teal-light);letter-spacing:0.1em;min-height:40px;display:flex;align-items:center;justify-content:center}
+        .tracking-id-box{background:rgba(20,184,166,0.08);border:1px solid var(--border-teal);border-radius:var(--radius-sm);padding:0.8rem;text-align:center;margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--teal-light);letter-spacing:0.05em}
+        .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--navy);border:1px solid var(--border-teal);color:var(--text-bright);padding:0.8rem 1.5rem;border-radius:100px;font-size:0.82rem;font-weight:500;z-index:500;opacity:0;visibility:hidden;transition:all var(--transition);box-shadow:0 10px 30px rgba(0,0,0,0.5);white-space:nowrap}
+        .toast.show{opacity:1;visibility:visible;bottom:120px}
+        
+        /* New Styles for Dynamic Multi-customization */
+        .custom-items-container {
+            margin-top: 1.2rem;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 5px;
+            border-top: 1px dashed var(--border);
+            padding-top: 1rem;
+        }
+        .custom-item-row {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        .custom-item-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--teal-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .custom-grid-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        @media(max-width: 1024px){.product-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){
+            .bottom-nav{display:flex}body{padding-bottom:80px}
+            .main-content{padding:1.5rem 4%}.page-title{font-size:1.2rem}
+            .order-body{flex-direction:column;align-items:flex-start}.order-price{text-align:left}
+        }
+        @media(max-width:480px){
+            .top-nav{padding:0 3%;height:56px}.nav-logo{font-size:1.1rem}
+            .product-grid{grid-template-columns:1fr}.wa-banner{flex-direction:column;text-align:center}
+            .custom-grid-fields { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="home.html" class="back-btn">← Dashboard</a>
+            <a href="home.html" class="nav-logo">TechFest 2.0</a>
+        </div>
+        <a href="profile.html" class="user-avatar" id="userAvatar">U</a>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="page-title">🛍️ Order Merchandise</h1>
+        <p class="page-subtitle">Official TechFest 2.0 gear — pre-order now</p>
+        <div class="deadline-banner">⏰ <strong>Pre-order deadline: 14 July 2025</strong> — All items collected at Day 1 Registration Desk</div>
+
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="Tshirt.jpg" alt="Official T-Shirt">
+                <h3>Official T-Shirt</h3>
+                <p class="product-desc">Customised TechFest 2.0 event T-shirt with your name printed on the back.</p>
+                <p class="product-note">🎨 Custom name included</p>
+                <div class="product-price">₦7,000</div>
+                <button class="btn-order" id="orderTshirt">Order Now</button>
+            </div>
+            <div class="product-card">
+                <img src="cap.jpg" alt="Official Cap">
+                <h3>Official Cap</h3>
+                <p class="product-desc">Customised TechFest 2.0 branded cap. Limited quantities available.</p>
+                <p class="product-note">One size fits all</p>
+                <div class="product-price">₦1,500</div>
+                <button class="btn-order" id="orderCap">Order Now</button>
+            </div>
+            <div class="product-card">
+                <img src="jotter.jpg" alt="Official Jotter">
+                <h3>Official Jotter</h3>
+                <p class="product-desc">Premium TechFest 2.0 branded jotter. Take notes in style.</p>
+                <p class="product-note">Premium quality</p>
+                <div class="product-price">₦1,000</div>
+                <button class="btn-order" id="orderJotter">Order Now</button>
+            </div>
+            <div class="product-card">
+                <img src="bag.jpg" alt="Official Hand Bag">
+                <h3>Official Hand Bag</h3>
+                <p class="product-desc">Stylish TechFest 2.0 branded tote bag. Carry your essentials with pride.</p>
+                <p class="product-note">Durable & stylish</p>
+                <div class="product-price">₦2,000</div>
+                <button class="btn-order" id="orderBag">Order Now</button>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h3>📋 All Orders</h3>
+            <span class="order-count-badge" id="orderCountBadge">0 orders</span>
+        </div>
+        <div id="orderHistory"><div class="empty-state"><div class="empty-icon">📭</div><p>Loading orders...</p></div></div>
+
+        <div class="wa-banner">
+            <p>📱 <strong>Join WhatsApp</strong> for order updates & delivery info</p>
+            <a href="https://whatsapp.com/channel/0029VbC7cwLAe5VzqHCUiQ1J" target="_blank" class="btn-wa" id="waJoinBtn">📱 Join Group</a>
+        </div>
+    </div>
+
+    <nav class="bottom-nav" id="bottomNav">
+        <a href="home.html">🏠<span>Home</span></a>
+        <a href="my-registration.html">📝<span>Registration</span></a>
+        <a href="orders.html" class="active">🛍️<span>Orders</span></a>
+        <a href="profile.html">👤<span>Profile</span></a>
+    </nav>
+
+    <div class="modal-overlay" id="orderModalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="orderModalClose">✕</button>
+            <h3 id="orderModalTitle">Order Item</h3>
+            <p class="modal-subtitle" id="orderModalSubtitle">Fill in the details below</p>
+            
+            <div class="form-group">
+                <label>Quantity</label>
+                <div class="qty-selector">
+                    <button class="qty-btn" id="qtyMinus">−</button>
+                    <span class="qty-display" id="qtyDisplay">1</span>
+                    <button class="qty-btn" id="qtyPlus">+</button>
+                </div>
+            </div>
+
+            <div id="customItemsContainer" class="custom-items-container"></div>
+
+            <div class="order-summary-box">
+                <div class="summary-row"><span id="summaryItem">Item</span><span id="summaryUnitPrice">₦0</span></div>
+                <div class="summary-row"><span>Quantity</span><span id="summaryQty">× 1</span></div>
+                <div class="summary-row total"><span>Total</span><span id="summaryTotal">₦0</span></div>
+            </div>
+            
+            <button class="modal-btn modal-btn-primary" id="placeOrderBtn"><span class="btn-spinner" id="orderSpinner"></span>Place Order & Proceed to Payment →</button>
+            <button class="modal-btn modal-btn-secondary" id="orderModalCancel">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="modalCloseBtn">✕</button>
+            <div class="modal-icon-wrap" id="modalIconWrap"><span id="modalIcon">✅</span></div>
+            <h3 id="modalTitle">Success</h3>
+            <p id="modalMessage">Action completed.</p>
+            <div id="modalButtons"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, getDocs, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseQuery = query;
+        window.firebaseOrderBy = orderBy;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseUpdateDoc = updateDoc;
+        window.firebaseDoc = doc;
+        window.firebaseServerTimestamp = serverTimestamp;
+        console.log("✅ Firebase initialized & exposed");
+    </script>
+
+    <script>
+        let currentUser = null;
+        let currentOrderItem = null;
+        let currentQuantity = 1;
+        let currentUnitPrice = 0;
+        
+        const orderModalOverlay = document.getElementById('orderModalOverlay');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const orderHistory = document.getElementById('orderHistory');
+        const userAvatar = document.getElementById('userAvatar');
+        const toast = document.getElementById('toast');
+        const modalIconWrap = document.getElementById('modalIconWrap');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalButtons = document.getElementById('modalButtons');
+        const orderCountBadge = document.getElementById('orderCountBadge');
+        const customItemsContainer = document.getElementById('customItemsContainer');
+
+        function waitForFirebase(cb) {
+            if (window.firebaseOnAuthStateChanged && window.firebaseAuth) {
+                cb();
+            } else {
+                setTimeout(() => waitForFirebase(cb), 150);
+            }
+        }
+
+        waitForFirebase(() => {
+            window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                currentUser = user;
+                userAvatar.textContent = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
+                await loadOrders();
+            });
+        });
+
+        document.getElementById('orderTshirt').addEventListener('click', () => openOrderModal('tshirt', 'Official T-Shirt', 7000, true));
+        document.getElementById('orderCap').addEventListener('click', () => openOrderModal('cap', 'Official Cap', 1500, false));
+        document.getElementById('orderJotter').addEventListener('click', () => openOrderModal('jotter', 'Official Jotter', 1000, false));
+        document.getElementById('orderBag').addEventListener('click', () => openOrderModal('bag', 'Official Hand Bag', 2000, false));
+        document.getElementById('waJoinBtn').addEventListener('click', () => showToast('Joined WhatsApp group! ✅'));
+
+        function openOrderModal(type, name, price, needsSize) {
+            currentOrderItem = { type, name, price, needsSize };
+            currentQuantity = 1;
+            currentUnitPrice = price;
+            document.getElementById('orderModalTitle').textContent = 'Order ' + name;
+            document.getElementById('qtyDisplay').textContent = '1';
+            
+            renderCustomizationRows();
+            updateSummary();
+            
+            orderModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Renders configuration options per unique item unit ordered
+        function renderCustomizationRows() {
+            customItemsContainer.innerHTML = '';
+            
+            if (!currentOrderItem) return;
+
+            // Only generate structural rows if the item requires customized options like Sizes/Names
+            if (!currentOrderItem.needsSize) {
+                customItemsContainer.style.display = 'none';
+                return;
+            }
+
+            customItemsContainer.style.display = 'block';
+            for (let i = 1; i <= currentQuantity; i++) {
+                const row = document.createElement('div');
+                row.className = 'custom-item-row';
+                row.innerHTML = `
+                    <div class="custom-item-title">Item #${i} Customization</div>
+                    <div class="custom-grid-fields">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Size *</label>
+                            <select class="item-size-input" required>
+                                <option value="">Select</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Custom Name *</label>
+                            <input type="text" class="item-name-input" placeholder="Name on Back" maxlength="15" required>
+                        </div>
+                    </div>
+                `;
+                customItemsContainer.appendChild(row);
+            }
+        }
+
+        function closeOrderModal() {
+            orderModalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            currentOrderItem = null;
+        }
+
+        document.getElementById('orderModalClose').addEventListener('click', closeOrderModal);
+        document.getElementById('orderModalCancel').addEventListener('click', closeOrderModal);
+        orderModalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) closeOrderModal();
+        });
+
+        document.getElementById('qtyMinus').addEventListener('click', () => {
+            currentQuantity = Math.max(1, currentQuantity - 1);
+            document.getElementById('qtyDisplay').textContent = currentQuantity;
+            renderCustomizationRows();
+            updateSummary();
+        });
+        document.getElementById('qtyPlus').addEventListener('click', () => {
+            currentQuantity = Math.min(10, currentQuantity + 1);
+            document.getElementById('qtyDisplay').textContent = currentQuantity;
+            renderCustomizationRows();
+            updateSummary();
+        });
+
+        function updateSummary() {
+            const total = currentUnitPrice * currentQuantity;
+            document.getElementById('summaryItem').textContent = currentOrderItem?.name || 'Item';
+            document.getElementById('summaryUnitPrice').textContent = '₦' + currentUnitPrice.toLocaleString();
+            document.getElementById('summaryQty').textContent = '× ' + currentQuantity;
+            document.getElementById('summaryTotal').textContent = '₦' + total.toLocaleString();
+        }
+
+        function generateTrackingId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = 'TECH-';
+            for (let i = 0; i < 8; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+
+        // PLACE ORDERS — Safely handles singular or multiple discrete item rows
+        document.getElementById('placeOrderBtn').addEventListener('click', async function() {
+            if (!currentOrderItem) return;
+            
+            const needsSize = currentOrderItem.needsSize;
+            const itemsCustomizations = [];
+
+            if (needsSize) {
+                const sizeInputs = document.querySelectorAll('.item-size-input');
+                const nameInputs = document.querySelectorAll('.item-name-input');
+                
+                for (let i = 0; i < currentQuantity; i++) {
+                    const size = sizeInputs[i].value;
+                    const name = nameInputs[i].value.trim();
+
+                    if (!size) {
+                        showToast(`Please select a size for Item #${i+1}`);
+                        return;
+                    }
+                    if (!name) {
+                        showToast(`Please enter a custom name for Item #${i+1}`);
+                        return;
+                    }
+                    if (name.length < 2) {
+                        showToast(`Custom name for Item #${i+1} must be at least 2 characters`);
+                        return;
+                    }
+                    itemsCustomizations.push({ size, name });
+                }
+            }
+
+            const btn = document.getElementById('placeOrderBtn');
+            const spinner = document.getElementById('orderSpinner');
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                await currentUser.getIdToken(true);
+                const trackingId = generateTrackingId();
+                let lastSavedDocId = "";
+
+                // Loop through items and add entries into database context cleanly
+                if (needsSize) {
+                    for (let i = 0; i < currentQuantity; i++) {
+                        const orderData = {
+                            uid: currentUser.uid,
+                            trackingId: `${trackingId}-${i+1}`, 
+                            itemType: currentOrderItem.type,
+                            itemName: `${currentOrderItem.name} (#${i+1})`,
+                            size: itemsCustomizations[i].size,
+                            customName: itemsCustomizations[i].name,
+                            quantity: 1, // Tracked accurately per unit custom name
+                            unitPrice: currentUnitPrice,
+                            totalPrice: currentUnitPrice,
+                            status: 'pending_payment',
+                            createdAt: window.firebaseServerTimestamp()
+                        };
+                        const docRef = await window.firebaseAddDoc(
+                            window.firebaseCollection(window.firebaseDb, 'merchandise_orders'),
+                            orderData
+                        );
+                        lastSavedDocId = docRef.id;
+                    }
+                } else {
+                    // Regular order with no customized variants
+                    const orderData = {
+                        uid: currentUser.uid,
+                        trackingId: trackingId,
+                        itemType: currentOrderItem.type,
+                        itemName: currentOrderItem.name,
+                        size: null,
+                        customName: null,
+                        quantity: currentQuantity,
+                        unitPrice: currentUnitPrice,
+                        totalPrice: currentUnitPrice * currentQuantity,
+                        status: 'pending_payment',
+                        createdAt: window.firebaseServerTimestamp()
+                    };
+                    const docRef = await window.firebaseAddDoc(
+                        window.firebaseCollection(window.firebaseDb, 'merchandise_orders'),
+                        orderData
+                    );
+                    lastSavedDocId = docRef.id;
+                }
+
+                closeOrderModal();
+                btn.disabled = false;
+                spinner.style.display = 'none';
+
+                modalIconWrap.className = 'modal-icon-wrap success';
+                modalIcon.textContent = '✅';
+                modalTitle.textContent = 'Orders Placed!';
+                modalMessage.innerHTML = 'All setup customized units saved.<br><div class="tracking-id-box">📦 Group Tracking ID: <strong>' + trackingId + '</strong></div>Redirecting to payment...';
+                modalButtons.innerHTML = '<button class="modal-btn modal-btn-primary" id="goPayBtn">Go to Payment Now →</button>';
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                document.getElementById('goPayBtn').addEventListener('click', () => {
+                    closeModal();
+                    window.location.href = 'payment.html?orderId=' + lastSavedDocId;
+                });
+
+                setTimeout(() => {
+                    if (document.getElementById('goPayBtn')) {
+                        closeModal();
+                        window.location.href = 'payment.html?orderId=' + lastSavedDocId;
+                    }
+                }, 4000);
+
+            } catch (error) {
+                console.error('❌ Order error:', error);
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                showToast('Failed: ' + (error.message || 'Please try again.'));
+            }
+        });
+
+        async function loadOrders() {
+            try {
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'merchandise_orders'),
+                    window.firebaseOrderBy('createdAt', 'desc')
+                );
+
+                const snapshot = await window.firebaseGetDocs(q);
+                orderCountBadge.textContent = snapshot.size + ' order' + (snapshot.size !== 1 ? 's' : '');
+
+                if (snapshot.empty) {
+                    orderHistory.innerHTML = '<div class="empty-state"><div class="empty-icon">🛍️</div><p>No orders yet</p></div>';
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const isMyOrder = data.uid === currentUser.uid;
+                    const date = data.createdAt?.toDate?.() || new Date();
+                    
+                    const statusConfig = {
+                        pending_payment: { class: 'status-pending', label: 'Pending Payment' },
+                        proof_sent: { class: 'status-proof', label: 'Proof Sent' },
+                        confirmed: { class: 'status-confirmed', label: 'Confirmed' },
+                        delivered: { class: 'status-delivered', label: 'Delivered' },
+                        cancelled: { class: 'status-cancelled', label: 'Cancelled' }
+                    };
+                    const sc = statusConfig[data.status] || { class: 'status-pending', label: 'Pending' };
+                    const iconMap = { tshirt: '👕', cap: '🧢', jotter: '📓', bag: '👜' };
+                    const icon = iconMap[data.itemType] || '📦';
+
+                    html += '<div class="order-card ' + (isMyOrder ? 'my-order' : '') + '">' +
+                        '<div class="order-header">' +
+                            '<span class="order-id">📦 ' + (data.trackingId || 'TECH-XXXX') + '</span>' +
+                            '<span class="status-badge ' + sc.class + '">' + sc.label + '</span>' +
+                            '<span class="order-date">' + date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + '</span>' +
+                        '</div>' +
+                        '<div class="order-body">' +
+                            '<div class="order-icon">' + icon + '</div>' +
+                            '<div class="order-info" style="flex:1;">' +
+                                '<h4>' + data.itemName + '</h4>' +
+                                '<div class="order-meta">' +
+                                    (data.size ? 'Size: ' + data.size + ' · ' : '') +
+                                    'Qty: ' + data.quantity +
+                                    (data.customName ? '<br><span class="custom-name-preview">🎨 ' + data.customName + '</span>' : '') +
+                                '</div>' +
+                                (isMyOrder ? '<div class="order-by" style="color:var(--teal-light);">⭐ Your Order</div>' : '<div class="order-by">By: ' + (data.uid?.substring(0, 8) || 'User') + '...</div>') +
+                            '</div>' +
+                            '<div class="order-price">₦' + (data.totalPrice?.toLocaleString() || '0') + '</div>' +
+                        '</div>';
+
+                    if (isMyOrder && data.status === 'pending_payment') {
+                        html += '<div class="order-actions">' +
+                            '<a href="payment.html?orderId=' + docSnap.id + '" class="btn-sm btn-pay">💳 Pay Now</a>' +
+                            '<button class="btn-sm btn-cancel-order" data-docid="' + docSnap.id + '">Cancel</button>' +
+                            '</div>';
+                    }
+
+                    html += '</div>';
+                });
+
+                orderHistory.innerHTML = html;
+
+                document.querySelectorAll('.btn-cancel-order').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        cancelOrder(this.dataset.docid);
+                    });
+                });
+
+            } catch (error) {
+                console.error('❌ Load orders error:', error);
+            }
+        }
+
+        function cancelOrder(docId) {
+            modalIconWrap.className = 'modal-icon-wrap warning';
+            modalIcon.textContent = '⚠️';
+            modalTitle.textContent = 'Cancel Order?';
+            modalMessage.textContent = 'This cannot be undone.';
+            modalButtons.innerHTML = 
+                '<button class="modal-btn modal-btn-primary" id="confirmCancelOrderBtn" style="background:var(--crimson);color:white;">Yes, Cancel</button>' +
+                '<button class="modal-btn modal-btn-secondary" id="keepOrderBtn">Keep Order</button>';
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            document.getElementById('confirmCancelOrderBtn').addEventListener('click', async () => {
+                try {
+                    await window.firebaseUpdateDoc(
+                        window.firebaseDoc(window.firebaseDb, 'merchandise_orders', docId),
+                        { status: 'cancelled' }
+                    );
+                    closeModal();
+                    showToast('Order cancelled');
+                    await loadOrders();
+                } catch (e) {
+                    showToast('Failed to cancel: ' + e.message);
+                }
+            });
+            document.getElementById('keepOrderBtn').addEventListener('click', closeModal);
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { closeModal(); closeOrderModal(); }
+        });
+
+        function showToast(m, d = 3000) {
+            toast.textContent = m;
+            toast.classList.add('show');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => toast.classList.remove('show'), d);
+        }
+    </script>
+</body>
+</html>
