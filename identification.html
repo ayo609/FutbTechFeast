@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUTBTECHFEAST 2.0 — Member Identification Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+    <style>
+        :root {
+            --deep-blue: #060E1A;
+            --navy: #0B1D3A;
+            --navy-light: #142D5E;
+            --teal: #0D9488;
+            --teal-light: #14B8A6;
+            --teal-pale: #CCFBF1;
+            --sky: #38BDF8;
+            --sky-light: #7DD3FC;
+            --sky-pale: #E0F2FE;
+            --white: #FFFFFF;
+            --crimson: #EF4444;
+            --green: #10B981;
+            --orange: #F59E0B;
+            --gold: #F59E0B;
+            --card-bg: rgba(11, 29, 58, 0.55);
+            --glass: rgba(255, 255, 255, 0.04);
+            --border: rgba(56, 189, 248, 0.2);
+            --border-teal: rgba(20, 184, 166, 0.4);
+            --text: #E2E8F0;
+            --text-bright: #F8FAFC;
+            --muted: #94A3B8;
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --radius-2xl: 40px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--deep-blue);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--teal-light);
+            opacity: 0.08;
+            animation: floatUp 12s infinite ease-in;
+        }
+        .particle:nth-child(1) {
+            width: 6px;
+            height: 6px;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 14s;
+        }
+        .particle:nth-child(2) {
+            width: 4px;
+            height: 4px;
+            left: 25%;
+            animation-delay: 2s;
+            animation-duration: 11s;
+        }
+        .particle:nth-child(3) {
+            width: 8px;
+            height: 8px;
+            left: 40%;
+            animation-delay: 4s;
+            animation-duration: 16s;
+        }
+        .particle:nth-child(4) {
+            width: 5px;
+            height: 5px;
+            left: 55%;
+            animation-delay: 1s;
+            animation-duration: 13s;
+        }
+        .particle:nth-child(5) {
+            width: 7px;
+            height: 7px;
+            left: 70%;
+            animation-delay: 3s;
+            animation-duration: 15s;
+        }
+        .particle:nth-child(6) {
+            width: 3px;
+            height: 3px;
+            left: 85%;
+            animation-delay: 5s;
+            animation-duration: 10s;
+        }
+        .particle:nth-child(7) {
+            width: 6px;
+            height: 6px;
+            left: 92%;
+            animation-delay: 6s;
+            animation-duration: 17s;
+        }
+        .particle:nth-child(8) {
+            width: 4px;
+            height: 4px;
+            left: 18%;
+            animation-delay: 7s;
+            animation-duration: 12s;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            50% {
+                opacity: 0.06;
+            }
+            90% {
+                opacity: 0.02;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 14, 26, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-btn {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: color var(--transition);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+        .back-btn:hover {
+            color: var(--teal-light);
+        }
+        .nav-logo {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.4rem;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, var(--teal-light), var(--sky-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 1.5rem 5% 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.3rem;
+        }
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* Loading / Locked States */
+        .state-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            min-height: 300px;
+            backdrop-filter: blur(12px);
+        }
+        .state-overlay.locked {
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.08);
+        }
+        .state-icon {
+            font-size: 4rem;
+            margin-bottom: 1.2rem;
+            animation: pulseIcon 2s ease-in-out infinite;
+        }
+        @keyframes pulseIcon {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+        }
+        .state-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+        }
+        .state-text {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.8rem;
+            border-radius: 100px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal), var(--teal-light));
+            color: var(--white);
+            box-shadow: 0 8px 25px rgba(20, 184, 166, 0.3);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 12px 35px rgba(20, 184, 166, 0.45);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border-teal);
+            color: var(--teal-light);
+        }
+        .btn-outline:hover {
+            background: rgba(20, 184, 166, 0.1);
+            border-color: var(--teal-light);
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--teal-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============ ID CARD SECTION ============ */
+        .card-wrapper {
+            display: flex;
+            justify-content: center;
+            perspective: 1200px;
+        }
+
+        /* The curved edge square card */
+        .id-card {
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(160deg, #ffffff 0%, #f9fafb 25%, #f1f5f9 60%, #fefefe 100%);
+            border-radius: var(--radius-2xl);
+            padding: 28px 26px 24px;
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.55),
+                0 0 0 2px rgba(245, 158, 11, 0.25),
+                0 0 0 5px rgba(255, 255, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: cardEntry 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        @keyframes cardEntry {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) rotateX(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.07) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .id-card::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Card inner content (relative so it sits above pseudo-elements) */
+        .card-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Card Header */
+        .card-header {
+            text-align: center;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+        .card-event-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            background: linear-gradient(135deg, #0B1D3A 0%, #1e4b7c 50%, #0B1D3A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--teal-light), #0f766e);
+            color: #fff;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 14px;
+            border-radius: 100px;
+            margin-top: 4px;
+        }
+
+        /* Card Body - the form inside the card */
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #475569;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #0f172a;
+            background: #f8fafc;
+            transition: all var(--transition);
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--teal-light);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+            background: #fff;
+        }
+        .form-group input.error,
+        .form-group select.error {
+            border-color: var(--crimson);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+            background: #fef2f2;
+        }
+        .form-group input.valid,
+        .form-group select.valid {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.08);
+        }
+        .error-msg {
+            font-size: 0.66rem;
+            color: var(--crimson);
+            font-weight: 500;
+            min-height: 16px;
+            letter-spacing: 0.02em;
+        }
+
+        /* Gender Toggle */
+        .gender-toggle {
+            display: flex;
+            gap: 10px;
+        }
+        .gender-option {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #64748b;
+            background: #f8fafc;
+            transition: all var(--transition);
+            user-select: none;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .gender-option:hover {
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+        .gender-option.selected {
+            border-color: var(--teal-light);
+            background: rgba(20, 184, 166, 0.08);
+            color: #0f766e;
+            font-weight: 700;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.08);
+        }
+
+        /* Card Footer - Verified Signature */
+        .card-footer {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 2px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .verified-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .verified-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #0f766e;
+        }
+        .verified-date {
+            font-size: 0.6rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* Action Buttons below card */
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-download {
+            background: linear-gradient(135deg, #0B1D3A, #142D5E);
+            color: var(--white);
+            box-shadow: 0 10px 30px rgba(11, 29, 58, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-download:hover {
+            box-shadow: 0 14px 38px rgba(11, 29, 58, 0.55);
+            transform: translateY(-2px);
+        }
+        .btn-download:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #0f172a;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-teal);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            border-color: var(--green);
+        }
+        .toast.error {
+            border-color: var(--crimson);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(6, 14, 26, 0.94);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid var(--border);
+            padding: 0.6rem 5%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 1.3rem;
+            transition: all var(--transition);
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-sm);
+        }
+        .bottom-nav a.active {
+            color: var(--teal-light);
+            background: rgba(20, 184, 166, 0.1);
+        }
+        .bottom-nav a span {
+            font-size: 0.6rem;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .id-card {
+                border-radius: 28px;
+                padding: 20px 16px 18px;
+            }
+            .card-event-title {
+                font-size: 1.5rem;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .gender-toggle {
+                gap: 6px;
+            }
+            .gender-option {
+                padding: 8px 10px;
+                font-size: 0.78rem;
+            }
+            .card-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Particles -->
+    <div class="bg-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <button class="back-btn" onclick="window.location.href='history.html'">← History</button>
+            <span class="nav-logo">TechFest 2.0</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">🪪 Member Identification Card</h1>
+            <p class="page-subtitle">Your official entry pass for FUTBTECHFEAST 2.0</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="state-overlay">
+            <div class="spinner"></div>
+            <p class="state-text" style="color:var(--muted);">Verifying your order status...</p>
+        </div>
+
+        <!-- Locked State (No confirmed/delivered order) -->
+        <div id="lockedState" class="state-overlay locked" style="display:none;">
+            <div class="state-icon">🔒</div>
+            <h2 class="state-title">Access Restricted</h2>
+            <p class="state-text">
+                Your order has not been <strong style="color:var(--green);">confirmed</strong> or <strong style="color:var(--teal-light);">delivered</strong> yet.<br>
+                Only users with a confirmed payment or delivered order can generate their ID card.
+            </p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                <button class="btn btn-outline" onclick="retryVerification()">🔄 Retry Check</button>
+                <a href="history.html" class="btn btn-primary">📋 View Order History</a>
+            </div>
+        </div>
+
+        <!-- ID Card Section (Hidden until verified) -->
+        <div id="cardSection" style="display:none;">
+            <div class="card-wrapper">
+                <!-- The Curved Edge ID Card -->
+                <div class="id-card" id="idCard">
+                    <div class="card-inner">
+                        <!-- Card Header -->
+                        <div class="card-header">
+                            <div class="card-event-title">FUTBTECHFEAST 2.0</div>
+                            <span class="card-badge">🎫 Official Entry Pass</span>
+                        </div>
+
+                        <!-- Card Body - Editable Form -->
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>First Name *</label>
+                                    <input type="text" id="firstName" placeholder="Enter first name" autocomplete="given-name">
+                                    <span class="error-msg" id="firstNameError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Surname *</label>
+                                    <input type="text" id="surname" placeholder="Enter surname" autocomplete="family-name">
+                                    <span class="error-msg" id="surnameError"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Other Names</label>
+                                <input type="text" id="otherNames" placeholder="Middle name or other names (optional)">
+                                <span class="error-msg" id="otherNamesError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Gender *</label>
+                                <div class="gender-toggle">
+                                    <div class="gender-option" data-gender="male" onclick="selectGender('male', this)">♂️ Male</div>
+                                    <div class="gender-option" data-gender="female" onclick="selectGender('female', this)">♀️ Female</div>
+                                </div>
+                                <span class="error-msg" id="genderError"></span>
+                                <input type="hidden" id="genderValue" value="">
+                            </div>
+                            <div class="form-group">
+                                <label>Position / Post *</label>
+                                <select id="position">
+                                    <option value="">-- Select your post --</option>
+                                    <option value="hackathon">⚙️ Hackathon</option>
+                                    <option value="talent_showcase">💡 Talent Showcase</option>
+                                    <option value="master_debate">🎙️ Master Debate</option>
+                                    <option value="ai_prompting">🤖 AI Prompting</option>
+                                    <option value="spectator">👥 Spectator</option>
+                                </select>
+                                <span class="error-msg" id="positionError"></span>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Department Name *</label>
+                                    <input type="text" id="department" placeholder="e.g. Computer Science">
+                                    <span class="error-msg" id="departmentError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Course of Study *</label>
+                                    <input type="text" id="course" placeholder="e.g. Software Engineering">
+                                    <span class="error-msg" id="courseError"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer - Verified Signature -->
+                        <div class="card-footer">
+                            <div class="verified-icon">✓</div>
+                            <div>
+                                <div class="verified-text">Verified Member</div>
+                                <div class="verified-date" id="issueDate">Issued: --</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card-actions">
+                <button class="btn btn-download" id="downloadBtn" onclick="downloadCard()">
+                    📥 Download Entry Card
+                </button>
+                <button class="btn btn-outline" onclick="resetForm()">
+                    🔄 Reset Form
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="home.html">🏠<span>Home</span></a>
+        <a href="my-registration.html">📝<span>Registration</span></a>
+        <a href="history.html">🛍️<span>History</span></a>
+        <a href="identification.html" class="active">🪪<span>ID Card</span></a>
+    </nav>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        window.firebaseCollection = collection;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseGetDocs = getDocs;
+
+        document.dispatchEvent(new Event('FirebaseReady'));
+    </script>
+
+    <script>
+        // ============ GLOBAL STATE ============
+        let currentUser = null;
+        let isOrderConfirmedOrDelivered = false;
+        let selectedGender = '';
+
+        // DOM Elements
+        const loadingState = document.getElementById('loadingState');
+        const lockedState = document.getElementById('lockedState');
+        const cardSection = document.getElementById('cardSection');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const toast = document.getElementById('toast');
+
+        // Form elements
+        const firstNameInput = document.getElementById('firstName');
+        const surnameInput = document.getElementById('surname');
+        const otherNamesInput = document.getElementById('otherNames');
+        const genderValueInput = document.getElementById('genderValue');
+        const positionSelect = document.getElementById('position');
+        const departmentInput = document.getElementById('department');
+        const courseInput = document.getElementById('course');
+        const issueDateEl = document.getElementById('issueDate');
+
+        // ============ FIREBASE AUTH & VERIFICATION ============
+        document.addEventListener('FirebaseReady', () => {
+            window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                currentUser = user;
+                await verifyOrderStatus();
+            });
+        });
+
+        async function verifyOrderStatus() {
+            showLoading(true);
+            showLocked(false);
+            showCardSection(false);
+
+            try {
+                const ordersRef = window.firebaseCollection(window.firebaseDb, 'merchandise_orders');
+                const q = window.firebaseQuery(
+                    ordersRef,
+                    window.firebaseWhere('userId', '==', currentUser.uid)
+                );
+                const querySnapshot = await window.firebaseGetDocs(q);
+
+                isOrderConfirmedOrDelivered = false;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const status = (data.status || '').toLowerCase();
+                    // UPDATED: Check for confirmed OR delivered status (matching admin panel)
+                    if (status === 'confirmed' || status === 'delivered') {
+                        isOrderConfirmedOrDelivered = true;
+                    }
+                });
+
+                if (isOrderConfirmedOrDelivered) {
+                    showLoading(false);
+                    showLocked(false);
+                    showCardSection(true);
+                    prefillFromAuth();
+                    issueDateEl.textContent = 'Issued: ' + new Date().toLocaleDateString('en-NG', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    initValidation();
+                } else {
+                    showLoading(false);
+                    showLocked(true);
+                    showCardSection(false);
+                }
+            } catch (error) {
+                console.error('Order verification error:', error);
+                showLoading(false);
+                showLocked(true);
+                showCardSection(false);
+                showToast('Error verifying order status. Please try again.', 'error');
+            }
+        }
+
+        function retryVerification() {
+            verifyOrderStatus();
+        }
+
+        // ============ UI STATE HELPERS ============
+        function showLoading(show) {
+            loadingState.style.display = show ? 'flex' : 'none';
+        }
+
+        function showLocked(show) {
+            lockedState.style.display = show ? 'flex' : 'none';
+        }
+
+        function showCardSection(show) {
+            cardSection.style.display = show ? 'block' : 'none';
+        }
+
+        // ============ PREFILL FROM AUTH ============
+        function prefillFromAuth() {
+            if (currentUser) {
+                const displayName = currentUser.displayName || '';
+                const nameParts = displayName.split(' ');
+                if (nameParts.length >= 2) {
+                    if (!firstNameInput.value) firstNameInput.value = nameParts[0];
+                    if (!surnameInput.value) surnameInput.value = nameParts.slice(1).join(' ');
+                } else if (nameParts.length === 1 && !firstNameInput.value) {
+                    firstNameInput.value = nameParts[0];
+                }
+            }
+        }
+
+        // ============ GENDER SELECTION ============
+        function selectGender(gender, element) {
+            selectedGender = gender;
+            genderValueInput.value = gender;
+            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('genderError').textContent = '';
+            element.classList.add('valid');
+        }
+
+        // ============ REAL-TIME VALIDATION ============
+        function initValidation() {
+            const inputs = [
+                { el: firstNameInput, errorEl: document.getElementById('firstNameError'), validator: validateName,
+                    required: true },
+                { el: surnameInput, errorEl: document.getElementById('surnameError'), validator: validateName,
+                    required: true },
+                { el: otherNamesInput, errorEl: document.getElementById('otherNamesError'), validator: validateOtherNames,
+                    required: false },
+                { el: departmentInput, errorEl: document.getElementById('departmentError'), validator: validateRequired,
+                    required: true },
+                { el: courseInput, errorEl: document.getElementById('courseError'), validator: validateRequired,
+                    required: true },
+                { el: positionSelect, errorEl: document.getElementById('positionError'), validator: validateSelect,
+                    required: true },
+            ];
+
+            inputs.forEach(({ el, errorEl, validator, required }) => {
+                el.addEventListener('input', () => {
+                    const error = validator(el.value, required);
+                    errorEl.textContent = error;
+                    if (error) {
+                        el.classList.add('error');
+                        el.classList.remove('valid');
+                    } else if (el.value.trim()) {
+                        el.classList.remove('error');
+                        el.classList.add('valid');
+                    } else {
+                        el.classList.remove('error', 'valid');
+                    }
+                });
+                el.addEventListener('blur', () => {
+                    const error = validator(el.value, required);
+                    errorEl.textContent = error;
+                    if (error) {
+                        el.classList.add('error');
+                        el.classList.remove('valid');
+                    } else if (el.value.trim()) {
+                        el.classList.remove('error');
+                        el.classList.add('valid');
+                    }
+                });
+            });
+        }
+
+        function validateName(value, required) {
+            const trimmed = value.trim();
+            if (required && !trimmed) return 'This field is required.';
+            if (trimmed && !/^[a-zA-Z\s'-]+$/.test(trimmed)) return 'Only letters, spaces, hyphens, and apostrophes allowed.';
+            if (trimmed && trimmed.length < 2) return 'Must be at least 2 characters.';
+            return '';
+        }
+
+        function validateOtherNames(value, required) {
+            const trimmed = value.trim();
+            if (trimmed && !/^[a-zA-Z\s'-]+$/.test(trimmed)) return 'Only letters, spaces, hyphens, and apostrophes allowed.';
+            return '';
+        }
+
+        function validateRequired(value, required) {
+            if (required && !value.trim()) return 'This field is required.';
+            if (value.trim() && value.trim().length < 2) return 'Must be at least 2 characters.';
+            return '';
+        }
+
+        function validateSelect(value, required) {
+            if (required && !value) return 'Please select a post.';
+            return '';
+        }
+
+        // ============ FULL FORM VALIDATION ============
+        function validateAllFields() {
+            let isValid = true;
+
+            const checks = [
+                { value: firstNameInput.value, errorEl: document.getElementById('firstNameError'),
+                    validator: validateName, required: true, el: firstNameInput },
+                { value: surnameInput.value, errorEl: document.getElementById('surnameError'), validator: validateName,
+                    required: true, el: surnameInput },
+                { value: otherNamesInput.value, errorEl: document.getElementById('otherNamesError'),
+                    validator: validateOtherNames, required: false, el: otherNamesInput },
+                { value: departmentInput.value, errorEl: document.getElementById('departmentError'),
+                    validator: validateRequired, required: true, el: departmentInput },
+                { value: courseInput.value, errorEl: document.getElementById('courseError'), validator: validateRequired,
+                    required: true, el: courseInput },
+                { value: positionSelect.value, errorEl: document.getElementById('positionError'),
+                    validator: validateSelect, required: true, el: positionSelect },
+            ];
+
+            checks.forEach(({ value, errorEl, validator, required, el }) => {
+                const error = validator(value, required);
+                errorEl.textContent = error;
+                if (error) {
+                    el.classList.add('error');
+                    el.classList.remove('valid');
+                    isValid = false;
+                } else if (value.trim()) {
+                    el.classList.remove('error');
+                    el.classList.add('valid');
+                }
+            });
+
+            const genderErrorEl = document.getElementById('genderError');
+            if (!selectedGender) {
+                genderErrorEl.textContent = 'Please select your gender.';
+                document.querySelectorAll('.gender-option').forEach(opt => opt.classList.add('error'));
+                isValid = false;
+            } else {
+                genderErrorEl.textContent = '';
+                document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('error'));
+            }
+
+            if (!isValid) {
+                showToast('Please fix all errors before downloading.', 'error');
+                const firstError = document.querySelector('.error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return isValid;
+        }
+
+        // ============ DOWNLOAD CARD ============
+        async function downloadCard() {
+            if (!validateAllFields()) return;
+            if (!isOrderConfirmedOrDelivered) {
+                showToast('Order not confirmed/delivered. Cannot download.', 'error');
+                return;
+            }
+
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '⏳ Generating...';
+
+            try {
+                const cardElement = document.getElementById('idCard');
+                const canvas = await html2canvas(cardElement, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                });
+
+                const firstName = firstNameInput.value.trim().replace(/\s+/g, '-');
+                const surname = surnameInput.value.trim().replace(/\s+/g, '-');
+                const filename = `FUTBTECHFEAST-ID-${surname}-${firstName}.png`;
+
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                showToast('✅ Entry card downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('Download error:', error);
+                showToast('❌ Download failed. Please try again.', 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '📥 Download Entry Card';
+            }
+        }
+
+        // ============ RESET FORM ============
+        function resetForm() {
+            firstNameInput.value = '';
+            surnameInput.value = '';
+            otherNamesInput.value = '';
+            departmentInput.value = '';
+            courseInput.value = '';
+            positionSelect.value = '';
+            selectedGender = '';
+            genderValueInput.value = '';
+            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected', 'error',
+                'valid'));
+            document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+            document.querySelectorAll('input.error, input.valid, select.error, select.valid').forEach(el => {
+                el.classList.remove('error', 'valid');
+            });
+            prefillFromAuth();
+            issueDateEl.textContent = 'Issued: ' + new Date().toLocaleDateString('en-NG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            showToast('Form has been reset.', 'success');
+        }
+
+        // ============ TOAST ============
+        function showToast(message, type) {
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ============ INITIAL SETUP ============
+        showLoading(true);
+        showLocked(false);
+        showCardSection(false);
+    </script>
+</body>
+</html>
