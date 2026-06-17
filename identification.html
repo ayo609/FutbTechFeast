@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FUTBTECHFEAST 2.0 — Premium Member Identification Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+    <style>
+        :root {
+            --deep-blue: #060E1A;
+            --navy: #0B1D3A;
+            --navy-light: #142D5E;
+            --teal: #0D9488;
+            --teal-light: #14B8A6;
+            --teal-glow: rgba(20, 184, 166, 0.5);
+            --sky: #38BDF8;
+            --sky-light: #7DD3FC;
+            --white: #FFFFFF;
+            --crimson: #EF4444;
+            --green: #10B981;
+            --gold: #F59E0B;
+            --gold-light: #FBBF24;
+            --purple: #8B5CF6;
+            --pink: #EC4899;
+            --card-bg: rgba(11, 29, 58, 0.55);
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-strong: rgba(255, 255, 255, 0.08);
+            --border: rgba(56, 189, 248, 0.2);
+            --border-teal: rgba(20, 184, 166, 0.4);
+            --text: #E2E8F0;
+            --text-bright: #F8FAFC;
+            --muted: #94A3B8;
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --radius-2xl: 40px;
+            --radius-3xl: 56px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--deep-blue);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+        :focus-visible {
+            outline: 2px solid var(--sky-light);
+            outline-offset: 2px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+
+        /* Premium Animated Background */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: orbFloat 20s infinite ease-in-out;
+        }
+        .bg-orb:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: var(--teal-light);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        .bg-orb:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: var(--sky-light);
+            bottom: -80px;
+            right: -80px;
+            animation-delay: -7s;
+        }
+        .bg-orb:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: var(--purple);
+            top: 50%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+        @keyframes orbFloat {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(60px, -40px) scale(1.1);
+            }
+            50% {
+                transform: translate(-30px, 50px) scale(0.9);
+            }
+            75% {
+                transform: translate(-50px, -30px) scale(1.05);
+            }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle-dot {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--teal-light);
+            border-radius: 50%;
+            animation: particleDrift 8s infinite ease-in-out;
+            opacity: 0.5;
+        }
+        .particle-dot:nth-child(odd) {
+            background: var(--sky-light);
+            animation-duration: 10s;
+        }
+        .particle-dot:nth-child(3n) {
+            background: var(--gold-light);
+            animation-duration: 12s;
+        }
+        @keyframes particleDrift {
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            80% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(40px);
+                opacity: 0;
+            }
+        }
+
+        /* Top Navigation - Glassmorphism */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 14, 26, 0.7);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .back-btn {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: all var(--transition);
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-family: inherit;
+            backdrop-filter: blur(10px);
+        }
+        .back-btn:hover {
+            color: var(--teal-light);
+            border-color: var(--teal-light);
+            background: rgba(20, 184, 166, 0.1);
+            transform: translateX(-2px);
+        }
+        .nav-logo {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--sky-light) 50%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 620px;
+            margin: 0 auto;
+            padding: 2rem 5% 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.02em;
+        }
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            letter-spacing: 0.02em;
+        }
+
+        /* Loading / Locked States - Premium Glass */
+        .state-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: rgba(11, 29, 58, 0.4);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-3xl);
+            text-align: center;
+            min-height: 350px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        }
+        .state-overlay.locked {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        .state-icon {
+            font-size: 5rem;
+            margin-bottom: 1.2rem;
+            animation: floatIcon 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+        }
+        @keyframes floatIcon {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+        .state-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+        }
+        .state-text {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            max-width: 450px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 100px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-smooth);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal), var(--teal-light));
+            color: var(--white);
+            box-shadow: 0 8px 30px rgba(20, 184, 166, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 15px 45px rgba(20, 184, 166, 0.5);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: var(--teal-light);
+            backdrop-filter: blur(10px);
+        }
+        .btn-outline:hover {
+            background: rgba(20, 184, 166, 0.1);
+            border-color: var(--teal-light);
+            box-shadow: 0 8px 25px rgba(20, 184, 166, 0.2);
+        }
+
+        /* Spinner - Animated Rings */
+        .spinner-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+        }
+        .spinner-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            animation: spinRing 1.5s linear infinite;
+        }
+        .spinner-ring:nth-child(1) {
+            border-top-color: var(--teal-light);
+            animation-duration: 1s;
+        }
+        .spinner-ring:nth-child(2) {
+            inset: 6px;
+            border-right-color: var(--sky-light);
+            animation-duration: 1.5s;
+            animation-direction: reverse;
+        }
+        .spinner-ring:nth-child(3) {
+            inset: 12px;
+            border-bottom-color: var(--gold-light);
+            animation-duration: 2s;
+        }
+        @keyframes spinRing {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Step labels */
+        .step-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.66rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--teal-light);
+            margin-bottom: 0.9rem;
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(20, 184, 166, 0.08);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            border-radius: 100px;
+        }
+
+        /* ============ FORM PANEL ============ */
+        .form-panel {
+            background: rgba(11, 29, 58, 0.35);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-xl);
+            padding: 1.8rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Avatar upload */
+        .avatar-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 1.4rem;
+        }
+        .avatar-circle-wrap {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            flex-shrink: 0;
+        }
+        .avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 2px dashed rgba(148, 163, 184, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all var(--transition);
+        }
+        .avatar-circle:hover {
+            border-color: var(--teal-light);
+        }
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .avatar-circle .placeholder-icon {
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), var(--teal-light));
+            border: 2px solid var(--deep-blue);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all var(--transition);
+        }
+        .avatar-edit-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 18px rgba(20, 184, 166, 0.4);
+        }
+        .avatar-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .avatar-meta p {
+            font-size: 0.74rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+        .remove-photo-link {
+            background: none;
+            border: none;
+            color: #f87171;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+            align-self: flex-start;
+            transition: color var(--transition);
+        }
+        .remove-photo-link:hover {
+            color: #fca5a5;
+        }
+
+        .form-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group label {
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius-sm);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition);
+            outline: none;
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--teal-light);
+            box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .form-group input.error,
+        .form-group select.error {
+            border-color: var(--crimson);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+        .form-group input.valid,
+        .form-group select.valid {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
+            cursor: pointer;
+        }
+        .form-group select option {
+            background: var(--navy);
+            color: #fff;
+        }
+        .error-msg {
+            font-size: 0.62rem;
+            color: var(--crimson);
+            font-weight: 500;
+            min-height: 16px;
+            letter-spacing: 0.02em;
+        }
+
+        /* Gender Toggle */
+        .gender-toggle {
+            display: flex;
+            gap: 10px;
+        }
+        .gender-option {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1.5px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition);
+            user-select: none;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .gender-option:hover {
+            border-color: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .gender-option.selected {
+            border-color: var(--gold-light);
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold-light);
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+        }
+        .gender-option.error {
+            border-color: var(--crimson);
+        }
+
+        /* ============ PREMIUM GLASS ID CARD ============ */
+        .card-wrapper {
+            display: flex;
+            justify-content: center;
+            perspective: 1500px;
+            margin-top: 0.5rem;
+        }
+        .id-card-premium {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-2xl);
+            background: linear-gradient(155deg,
+                    rgba(255, 255, 255, 0.18) 0%,
+                    rgba(255, 255, 255, 0.08) 30%,
+                    rgba(255, 255, 255, 0.03) 60%,
+                    rgba(255, 255, 255, 0.12) 100%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            padding: 32px 24px 24px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.1),
+                0 0 60px rgba(20, 184, 166, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            animation: cardReveal 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .id-card-premium:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                0 50px 100px rgba(0, 0, 0, 0.6),
+                0 0 0 2px rgba(255, 255, 255, 0.15),
+                0 0 80px rgba(20, 184, 166, 0.25);
+        }
+        @keyframes cardReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) rotateX(8deg) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0) scale(1);
+            }
+        }
+        .id-card-premium::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 30%,
+                    rgba(255, 255, 255, 0.06) 40%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0.06) 60%,
+                    transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        /* Decorative corner accents */
+        .card-corner-accent {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 50px;
+            height: 50px;
+            border-top: 2px solid rgba(245, 158, 11, 0.5);
+            border-right: 2px solid rgba(245, 158, 11, 0.5);
+            border-radius: 0 10px 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .card-corner-accent-bl {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            width: 50px;
+            height: 50px;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.5);
+            border-left: 2px solid rgba(245, 158, 11, 0.5);
+            border-radius: 0 0 0 10px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .lanyard-hole {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48px;
+            height: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .card-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Card Header */
+        .card-header {
+            text-align: center;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+            border-radius: 50%;
+        }
+        .card-event-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg,
+                    #ffffff 0%,
+                    var(--gold-light) 30%,
+                    var(--teal-light) 60%,
+                    #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .card-institution {
+            font-size: 0.58rem;
+            color: rgba(255, 255, 255, 0.55);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 4px;
+        }
+        .card-badge-official {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: var(--gold-light);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-top: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Card photo row */
+        .card-photo-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .card-photo-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            padding: 3px;
+            flex-shrink: 0;
+            position: relative;
+            background: linear-gradient(135deg, var(--gold), var(--teal-light));
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+        .card-photo-ring .ring-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .card-photo-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .card-photo-ring .ring-placeholder {
+            font-size: 1.8rem;
+            opacity: 0.4;
+        }
+        .card-name {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+            word-break: break-word;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .card-position-pill {
+            display: inline-block;
+            background: rgba(20, 184, 166, 0.2);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            color: var(--teal-light);
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 100px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Card data grid */
+        .card-data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 14px;
+            padding: 14px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            margin-bottom: 16px;
+        }
+        .data-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .dl {
+            font-size: 0.56rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 700;
+        }
+        .dv {
+            font-size: 0.8rem;
+            color: #ffffff;
+            font-weight: 600;
+            word-break: break-word;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        .dv.mono {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        /* Card footer */
+        .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        .seal {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--green), var(--teal));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.5);
+            animation: verifyPulse 2s ease-in-out infinite;
+        }
+        @keyframes verifyPulse {
+            0%,
+            100% {
+                box-shadow: 0 4px 18px rgba(16, 185, 129, 0.5);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(16, 185, 129, 0.8);
+            }
+        }
+        .verified-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.64rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--green);
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+        .issued-label {
+            font-size: 0.56rem;
+            color: rgba(255, 255, 255, 0.45);
+            font-weight: 500;
+        }
+
+        .preview-hint {
+            text-align: center;
+            font-size: 0.74rem;
+            color: var(--muted);
+            margin: 0.9rem 0 1.8rem;
+        }
+
+        /* Action Buttons */
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-download {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+            color: var(--white);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .btn-download:hover {
+            box-shadow: 0 15px 45px rgba(20, 184, 166, 0.4);
+            transform: translateY(-3px);
+            border-color: var(--teal-light);
+        }
+        .btn-download:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-print {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--muted);
+            backdrop-filter: blur(10px);
+        }
+        .btn-print:hover {
+            border-color: var(--sky-light);
+            color: var(--sky-light);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(30px);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+            max-width: 90vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: 0.03em;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            border-color: var(--green);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+        }
+        .toast.error {
+            border-color: var(--crimson);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(6, 14, 26, 0.75);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.6rem 5%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .bottom-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 1.3rem;
+            transition: all var(--transition);
+            padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-sm);
+        }
+        .bottom-nav a.active {
+            color: var(--gold-light);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .bottom-nav a span {
+            font-size: 0.6rem;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .id-card-premium {
+                border-radius: 24px;
+                padding: 24px 16px 18px;
+            }
+            .card-event-title {
+                font-size: 1.7rem;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .gender-toggle {
+                gap: 6px;
+            }
+            .gender-option {
+                padding: 8px 10px;
+                font-size: 0.78rem;
+            }
+            .card-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .avatar-upload-row {
+                gap: 12px;
+            }
+            .card-photo-ring {
+                width: 65px;
+                height: 65px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Premium Animated Background -->
+    <div class="bg-animated">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-grid"></div>
+    </div>
+    <div class="particles" id="particlesContainer"></div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <button class="back-btn" onclick="window.location.href='history.html'">← History</button>
+            <span class="nav-logo">TechFest 2.0</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">🪪 Premium Member ID Card</h1>
+            <p class="page-subtitle">Your exclusive, glassmorphism entry badge for FUTBTECHFEAST 2.0</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="state-overlay">
+            <div class="spinner-container">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <p class="state-text" style="color:var(--muted);">Verifying your T-Shirt order status...</p>
+        </div>
+
+        <!-- Locked State -->
+        <div id="lockedState" class="state-overlay locked" style="display:none;">
+            <div class="state-icon">👕🔒</div>
+            <h2 class="state-title">Access Restricted</h2>
+            <p class="state-text">
+                You must have a <strong style="color:var(--teal-light);">👕 T-Shirt</strong> purchase that has been
+                <strong style="color:var(--green);">confirmed</strong> or <strong style="color:var(--teal-light);">delivered</strong>.<br><br>
+                Other items (Cap, Bag, Jotter) <strong>do not</strong> grant access to the entry card.<br>
+                Only <strong>confirmed T-Shirt orders</strong> unlock this page.
+            </p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                <button class="btn btn-outline" onclick="retryVerification()">🔄 Retry Check</button>
+                <a href="history.html" class="btn btn-primary">📋 View Order History</a>
+            </div>
+        </div>
+
+        <!-- Card Section -->
+        <div id="cardSection" style="display:none;">
+
+            <!-- STEP 1: Form Panel -->
+            <div class="form-panel">
+                <span class="step-label">Step 1 · Your Details</span>
+
+                <div class="avatar-upload-row">
+                    <div class="avatar-circle-wrap">
+                        <div class="avatar-circle" id="avatarCircle">
+                            <img id="photoPreviewImg" src="" alt="">
+                            <span class="placeholder-icon" id="photoPlaceholderIcon">🧑</span>
+                        </div>
+                        <button type="button" class="avatar-edit-btn" id="photoEditBtn" aria-label="Upload photo">📷</button>
+                        <input type="file" id="photoInput" accept="image/*" hidden>
+                    </div>
+                    <div class="avatar-meta">
+                        <p>Upload a clear passport-style photo (JPG/PNG, max 5MB). It's resized automatically.</p>
+                        <button type="button" class="remove-photo-link" id="removePhotoBtn" style="display:none;">Remove photo</button>
+                    </div>
+                </div>
+
+                <div class="form-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name *</label>
+                            <input type="text" id="firstName" placeholder="Enter first name" autocomplete="given-name">
+                            <span class="error-msg" id="firstNameError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Surname *</label>
+                            <input type="text" id="surname" placeholder="Enter surname" autocomplete="family-name">
+                            <span class="error-msg" id="surnameError"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Other Names</label>
+                        <input type="text" id="otherNames" placeholder="Middle name or other names (optional)">
+                        <span class="error-msg" id="otherNamesError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender *</label>
+                        <div class="gender-toggle">
+                            <div class="gender-option" data-gender="male" onclick="selectGender('male', this)">♂️ Male</div>
+                            <div class="gender-option" data-gender="female" onclick="selectGender('female', this)">♀️ Female</div>
+                        </div>
+                        <span class="error-msg" id="genderError"></span>
+                        <input type="hidden" id="genderValue" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Position / Post *</label>
+                        <select id="position">
+                            <option value="">-- Select your post --</option>
+                            <option value="hackathon">⚙️ Hackathon</option>
+                            <option value="talent_showcase">💡 Talent Showcase</option>
+                            <option value="master_debate">🎙️ Master Debate</option>
+                            <option value="ai_prompting">🤖 AI Prompting</option>
+                            <option value="spectator">👥 Spectator</option>
+                        </select>
+                        <span class="error-msg" id="positionError"></span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Department Name *</label>
+                            <input type="text" id="department" placeholder="e.g. Computer Science">
+                            <span class="error-msg" id="departmentError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Course of Study *</label>
+                            <input type="text" id="course" placeholder="e.g. Software Engineering">
+                            <span class="error-msg" id="courseError"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Premium Glass Card Preview -->
+            <span class="step-label" style="display:block;text-align:center;width:fit-content;margin:0 auto 0.9rem;">Step 2 · Your Card Preview</span>
+            <div class="card-wrapper">
+                <div class="id-card-premium" id="idCardPreview">
+                    <div class="card-corner-accent"></div>
+                    <div class="card-corner-accent-bl"></div>
+                    <div class="lanyard-hole"></div>
+                    <div class="card-inner">
+                        <div class="card-header">
+                            <div class="card-event-title">FUTBTECHFEAST 2.0</div>
+                            <div class="card-institution">Federal University of Technology, Babura</div>
+                            <span class="card-badge-official">🎫 Official Entry Pass</span>
+                        </div>
+                        <div class="card-photo-row">
+                            <div class="card-photo-ring">
+                                <div class="ring-inner">
+                                    <img id="previewPhotoImg" src="" alt="">
+                                    <span class="ring-placeholder" id="previewPhotoPlaceholder">🧑</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="card-name" id="previewName">Your Name</div>
+                                <div class="card-position-pill" id="previewPosition">Select post</div>
+                            </div>
+                        </div>
+                        <div class="card-data-grid">
+                            <div class="data-pair"><span class="dl">Department</span><span class="dv" id="previewDept">—</span></div>
+                            <div class="data-pair"><span class="dl">Course</span><span class="dv" id="previewCourse">—</span></div>
+                            <div class="data-pair"><span class="dl">Gender</span><span class="dv" id="previewGender">—</span></div>
+                            <div class="data-pair"><span class="dl">Member ID</span><span class="dv mono" id="previewMemberId">—</span></div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="seal">✓</div>
+                            <div>
+                                <div class="verified-label">Verified Member</div>
+                                <div class="issued-label" id="previewIssued">Issued —</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="preview-hint">✨ This premium glassmorphism card is exactly what downloads.</p>
+
+            <!-- Action Buttons -->
+            <div class="card-actions">
+                <button class="btn btn-download" id="downloadBtn" onclick="downloadCard()">📥 Download Entry Card</button>
+                <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
+                <button class="btn btn-outline" onclick="resetForm()">🔄 Reset Form</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="home.html">🏠<span>Home</span></a>
+        <a href="my-registration.html">📝<span>Registration</span></a>
+        <a href="history.html">🛍️<span>History</span></a>
+        <a href="identification.html" class="active">🪪<span>ID Card</span></a>
+    </nav>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        window.firebaseCollection = collection;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseDoc = doc;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseSetDoc = setDoc;
+
+        document.dispatchEvent(new Event('FirebaseReady'));
+    </script>
+
+    <script>
+        // ============ GLOBAL STATE ============
+        let currentUser = null;
+        let hasConfirmedTshirt = false;
+        let selectedGender = '';
+        let photoBase64 = null;
+
+        const POSITION_LABELS = {
+            hackathon: '⚙️ Hackathon',
+            talent_showcase: '💡 Talent Showcase',
+            master_debate: '🎙️ Master Debate',
+            ai_prompting: '🤖 AI Prompting',
+            spectator: '👥 Spectator'
+        };
+
+        // DOM Elements
+        const loadingState = document.getElementById('loadingState');
+        const lockedState = document.getElementById('lockedState');
+        const cardSection = document.getElementById('cardSection');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const toast = document.getElementById('toast');
+
+        const firstNameInput = document.getElementById('firstName');
+        const surnameInput = document.getElementById('surname');
+        const otherNamesInput = document.getElementById('otherNames');
+        const genderValueInput = document.getElementById('genderValue');
+        const positionSelect = document.getElementById('position');
+        const departmentInput = document.getElementById('department');
+        const courseInput = document.getElementById('course');
+
+        const photoInput = document.getElementById('photoInput');
+        const photoEditBtn = document.getElementById('photoEditBtn');
+        const removePhotoBtn = document.getElementById('removePhotoBtn');
+        const photoPreviewImg = document.getElementById('photoPreviewImg');
+        const photoPlaceholderIcon = document.getElementById('photoPlaceholderIcon');
+        const previewPhotoImg = document.getElementById('previewPhotoImg');
+        const previewPhotoPlaceholder = document.getElementById('previewPhotoPlaceholder');
+
+        // ============ GENERATE PARTICLES ============
+        function generateParticles() {
+            const container = document.getElementById('particlesContainer');
+            for (let i = 0; i < 30; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'particle-dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.animationDelay = Math.random() * 10 + 's';
+                dot.style.animationDuration = (6 + Math.random() * 10) + 's';
+                container.appendChild(dot);
+            }
+        }
+        generateParticles();
+
+        // ============ FIREBASE AUTH & VERIFICATION ============
+        document.addEventListener('FirebaseReady', () => {
+            window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                currentUser = user;
+                await verifyTshirtOrder();
+            });
+        });
+
+        async function verifyTshirtOrder() {
+            showLoading(true);
+            showLocked(false);
+            showCardSection(false);
+
+            try {
+                const ordersRef = window.firebaseCollection(window.firebaseDb, 'merchandise_orders');
+                const q = window.firebaseQuery(ordersRef, window.firebaseWhere('userId', '==', currentUser.uid));
+                const querySnapshot = await window.firebaseGetDocs(q);
+
+                hasConfirmedTshirt = false;
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const status = (data.status || '').toLowerCase();
+                    const itemType = (data.itemType || '').toLowerCase();
+                    const itemName = (data.itemName || '').toLowerCase();
+
+                    // Check if item is a T-shirt
+                    const isTshirt = (itemType === 'tshirt' ||
+                        itemName.includes('t-shirt') ||
+                        itemName.includes('tshirt') ||
+                        itemName.includes('t shirt'));
+
+                    // Check if status is confirmed or delivered
+                    const isConfirmedOrDelivered = (status === 'confirmed' || status === 'delivered');
+
+                    if (isTshirt && isConfirmedOrDelivered) {
+                        hasConfirmedTshirt = true;
+                    }
+                });
+
+                if (hasConfirmedTshirt) {
+                    showLoading(false);
+                    showLocked(false);
+                    showCardSection(true);
+                    await loadSavedCardData();
+                    setIssuedDate();
+                    renderPreview();
+                    initValidation();
+                } else {
+                    showLoading(false);
+                    showLocked(true);
+                    showCardSection(false);
+                }
+            } catch (error) {
+                console.error('T-Shirt verification error:', error);
+                showLoading(false);
+                showLocked(true);
+                showCardSection(false);
+                showToast('Error verifying T-Shirt order. Please try again.', 'error');
+            }
+        }
+
+        function retryVerification() {
+            verifyTshirtOrder();
+        }
+
+        // ============ UI STATE HELPERS ============
+        function showLoading(show) { loadingState.style.display = show ? 'flex' : 'none'; }
+
+        function showLocked(show) { lockedState.style.display = show ? 'flex' : 'none'; }
+
+        function showCardSection(show) { cardSection.style.display = show ? 'block' : 'none'; }
+
+        function setIssuedDate() {
+            document.getElementById('previewIssued').textContent = 'Issued ' + new Date().toLocaleDateString('en-NG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // ============ LOAD / PREFILL ============
+        async function loadSavedCardData() {
+            try {
+                const ref = window.firebaseDoc(window.firebaseDb, 'id_cards', currentUser.uid);
+                const snap = await window.firebaseGetDoc(ref);
+                if (snap.exists()) {
+                    const d = snap.data();
+                    firstNameInput.value = d.firstName || '';
+                    surnameInput.value = d.surname || '';
+                    otherNamesInput.value = d.otherNames || '';
+                    departmentInput.value = d.department || '';
+                    courseInput.value = d.course || '';
+                    positionSelect.value = d.position || '';
+                    if (d.gender) {
+                        const opt = document.querySelector(`.gender-option[data-gender="${d.gender}"]`);
+                        if (opt) selectGender(d.gender, opt);
+                    }
+                    if (d.photoBase64) {
+                        photoBase64 = d.photoBase64;
+                        updatePhotoPreview();
+                    }
+                    return;
+                }
+            } catch (error) {
+                console.error('Could not load saved card data:', error);
+            }
+            prefillFromAuth();
+        }
+
+        function prefillFromAuth() {
+            if (currentUser) {
+                const displayName = currentUser.displayName || '';
+                const nameParts = displayName.split(' ').filter(Boolean);
+                if (nameParts.length >= 2) {
+                    if (!firstNameInput.value) firstNameInput.value = nameParts[0];
+                    if (!surnameInput.value) surnameInput.value = nameParts.slice(1).join(' ');
+                } else if (nameParts.length === 1 && !firstNameInput.value) {
+                    firstNameInput.value = nameParts[0];
+                }
+            }
+        }
+
+        // ============ MEMBER ID ============
+        function shortId(uid) {
+            let hash = 0;
+            for (let i = 0; i < uid.length; i++) { hash = (hash * 31 + uid.charCodeAt(i)) >>> 0; }
+            return 'FT2-' + hash.toString(36).toUpperCase().slice(0, 6);
+        }
+
+        // ============ GENDER SELECTION ============
+        function selectGender(gender, element) {
+            selectedGender = gender;
+            genderValueInput.value = gender;
+            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected', 'error'));
+            element.classList.add('selected');
+            document.getElementById('genderError').textContent = '';
+            renderPreview();
+        }
+
+        // ============ LIVE PREVIEW ============
+        function renderPreview() {
+            const fullName = [firstNameInput.value.trim(), surnameInput.value.trim()].filter(Boolean).join(' ');
+            document.getElementById('previewName').textContent = fullName || 'Your Name';
+            document.getElementById('previewPosition').textContent = POSITION_LABELS[positionSelect.value] ||
+                'Select post';
+            document.getElementById('previewDept').textContent = departmentInput.value.trim() || '—';
+            document.getElementById('previewCourse').textContent = courseInput.value.trim() || '—';
+            document.getElementById('previewGender').textContent = selectedGender ? (selectedGender === 'male' ?
+                'Male ♂' : 'Female ♀') : '—';
+            document.getElementById('previewMemberId').textContent = currentUser ? shortId(currentUser.uid) : '—';
+        }
+
+        [firstNameInput, surnameInput, otherNamesInput, positionSelect, departmentInput, courseInput].forEach(el => {
+            el.addEventListener('input', renderPreview);
+            el.addEventListener('change', renderPreview);
+        });
+
+        // ============ PHOTO UPLOAD (base64, resized client-side) ============
+        photoEditBtn.addEventListener('click', () => photoInput.click());
+        photoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handlePhotoFile(file);
+            photoInput.value = '';
+        });
+        removePhotoBtn.addEventListener('click', () => {
+            photoBase64 = null;
+            updatePhotoPreview();
+            showToast('Photo removed.', 'success');
+        });
+
+        function handlePhotoFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Please choose an image file (JPG or PNG).', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Image must be smaller than 5MB.', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxDim = 500;
+                    let { width, height } = img;
+                    if (width > height && width > maxDim) { height = Math.round(height * (maxDim / width));
+                        width = maxDim; } else if (height >= width && height > maxDim) { width = Math.round(width * (
+                            maxDim / height));
+                        height = maxDim; }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    updatePhotoPreview();
+                    showToast('Photo updated successfully! 📸', 'success');
+                };
+                img.onerror = () => showToast('Could not read that image. Try a different file.', 'error');
+                img.src = e.target.result;
+            };
+            reader.onerror = () => showToast('Could not read that file.', 'error');
+            reader.readAsDataURL(file);
+        }
+
+        function updatePhotoPreview() {
+            if (photoBase64) {
+                photoPreviewImg.src = photoBase64;
+                photoPreviewImg.style.display = 'block';
+                photoPlaceholderIcon.style.display = 'none';
+                previewPhotoImg.src = photoBase64;
+                previewPhotoImg.style.display = 'block';
+                previewPhotoPlaceholder.style.display = 'none';
+                removePhotoBtn.style.display = 'inline-block';
+            } else {
+                photoPreviewImg.removeAttribute('src');
+                photoPreviewImg.style.display = 'none';
+                photoPlaceholderIcon.style.display = 'block';
+                previewPhotoImg.removeAttribute('src');
+                previewPhotoImg.style.display = 'none';
+                previewPhotoPlaceholder.style.display = 'block';
+                removePhotoBtn.style.display = 'none';
+            }
+        }
+
+        // ============ REAL-TIME VALIDATION ============
+        function initValidation() {
+            const inputs = [
+                { el: firstNameInput, errorEl: document.getElementById('firstNameError'), validator: validateName,
+                    required: true },
+                { el: surnameInput, errorEl: document.getElementById('surnameError'), validator: validateName,
+                    required: true },
+                { el: otherNamesInput, errorEl: document.getElementById('otherNamesError'),
+                validator: validateOtherNames, required: false },
+                { el: departmentInput, errorEl: document.getElementById('departmentError'),
+                validator: validateRequired, required: true },
+                { el: courseInput, errorEl: document.getElementById('courseError'), validator: validateRequired,
+                    required: true },
+                { el: positionSelect, errorEl: document.getElementById('positionError'), validator: validateSelect,
+                    required: true },
+            ];
+
+            inputs.forEach(({ el, errorEl, validator, required }) => {
+                el.addEventListener('input', () => {
+                    const error = validator(el.value, required);
+                    errorEl.textContent = error;
+                    if (error) { el.classList.add('error');
+                        el.classList.remove('valid'); } else if (el.value.trim()) { el.classList.remove(
+                        'error');
+                        el.classList.add('valid'); } else { el.classList.remove('error', 'valid'); }
+                });
+                el.addEventListener('blur', () => {
+                    const error = validator(el.value, required);
+                    errorEl.textContent = error;
+                    if (error) { el.classList.add('error');
+                        el.classList.remove('valid'); } else if (el.value.trim()) { el.classList.remove(
+                        'error');
+                        el.classList.add('valid'); }
+                });
+            });
+        }
+
+        function validateName(value, required) {
+            const trimmed = value.trim();
+            if (required && !trimmed) return 'This field is required.';
+            if (trimmed && !/^[a-zA-Z\s'-]+$/.test(trimmed))
+                return 'Only letters, spaces, hyphens, and apostrophes allowed.';
+            if (trimmed && trimmed.length < 2) return 'Must be at least 2 characters.';
+            return '';
+        }
+
+        function validateOtherNames(value) {
+            const trimmed = value.trim();
+            if (trimmed && !/^[a-zA-Z\s'-]+$/.test(trimmed))
+                return 'Only letters, spaces, hyphens, and apostrophes allowed.';
+            return '';
+        }
+
+        function validateRequired(value, required) {
+            if (required && !value.trim()) return 'This field is required.';
+            if (value.trim() && value.trim().length < 2) return 'Must be at least 2 characters.';
+            return '';
+        }
+
+        function validateSelect(value, required) {
+            if (required && !value) return 'Please select a post.';
+            return '';
+        }
+
+        // ============ FULL FORM VALIDATION ============
+        function validateAllFields() {
+            let isValid = true;
+            const checks = [
+                { value: firstNameInput.value, errorEl: document.getElementById('firstNameError'),
+                    validator: validateName, required: true, el: firstNameInput },
+                { value: surnameInput.value, errorEl: document.getElementById('surnameError'),
+                validator: validateName, required: true, el: surnameInput },
+                { value: otherNamesInput.value, errorEl: document.getElementById('otherNamesError'),
+                    validator: validateOtherNames, required: false, el: otherNamesInput },
+                { value: departmentInput.value, errorEl: document.getElementById('departmentError'),
+                    validator: validateRequired, required: true, el: departmentInput },
+                { value: courseInput.value, errorEl: document.getElementById('courseError'),
+                validator: validateRequired, required: true, el: courseInput },
+                { value: positionSelect.value, errorEl: document.getElementById('positionError'),
+                    validator: validateSelect, required: true, el: positionSelect },
+            ];
+
+            checks.forEach(({ value, errorEl, validator, required, el }) => {
+                const error = validator(value, required);
+                errorEl.textContent = error;
+                if (error) { el.classList.add('error');
+                    el.classList.remove('valid');
+                    isValid = false; } else if (value.trim()) { el.classList.remove('error');
+                    el.classList.add('valid'); }
+            });
+
+            const genderErrorEl = document.getElementById('genderError');
+            if (!selectedGender) {
+                genderErrorEl.textContent = 'Please select your gender.';
+                document.querySelectorAll('.gender-option').forEach(opt => opt.classList.add('error'));
+                isValid = false;
+            } else {
+                genderErrorEl.textContent = '';
+                document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('error'));
+            }
+
+            if (!isValid) {
+                showToast('Please fix all errors before downloading.', 'error');
+                const firstError = document.querySelector('.error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return isValid;
+        }
+
+        // ============ WAIT FOR IMAGES ============
+        function waitForImages(container) {
+            const imgs = Array.from(container.querySelectorAll('img')).filter(img => img.getAttribute('src'));
+            return Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res => {
+                img.addEventListener('load', res, { once: true });
+                img.addEventListener('error', res, { once: true });
+            })));
+        }
+
+        // ============ SAVE TO FIRESTORE ============
+        async function saveCardData() {
+            try {
+                const ref = window.firebaseDoc(window.firebaseDb, 'id_cards', currentUser.uid);
+                await window.firebaseSetDoc(ref, {
+                    firstName: firstNameInput.value.trim(),
+                    surname: surnameInput.value.trim(),
+                    otherNames: otherNamesInput.value.trim(),
+                    gender: selectedGender,
+                    position: positionSelect.value,
+                    department: departmentInput.value.trim(),
+                    course: courseInput.value.trim(),
+                    photoBase64: photoBase64 || null,
+                    updatedAt: new Date().toISOString()
+                });
+            } catch (error) {
+                console.error('Could not save card data:', error);
+            }
+        }
+
+        // ============ DOWNLOAD CARD ============
+        async function downloadCard() {
+            if (!validateAllFields()) return;
+            if (!hasConfirmedTshirt) {
+                showToast('No confirmed T-Shirt order. Cannot download.', 'error');
+                return;
+            }
+
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '⏳ Generating...';
+
+            try {
+                const cardElement = document.getElementById('idCardPreview');
+                await document.fonts.ready;
+                await waitForImages(cardElement);
+
+                const canvas = await html2canvas(cardElement, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    logging: false,
+                });
+
+                const firstName = firstNameInput.value.trim().replace(/\s+/g, '-');
+                const surname = surnameInput.value.trim().replace(/\s+/g, '-');
+                const filename = `FUTBTECHFEAST-ID-${surname}-${firstName}.png`;
+
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+
+                await saveCardData();
+                showToast('✅ Premium entry card downloaded!', 'success');
+            } catch (error) {
+                console.error('Download error:', error);
+                showToast('❌ Download failed. Please try again.', 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '📥 Download Entry Card';
+            }
+        }
+
+        // ============ RESET FORM ============
+        function resetForm() {
+            firstNameInput.value = '';
+            surnameInput.value = '';
+            otherNamesInput.value = '';
+            departmentInput.value = '';
+            courseInput.value = '';
+            positionSelect.value = '';
+            selectedGender = '';
+            genderValueInput.value = '';
+            photoBase64 = null;
+            updatePhotoPreview();
+            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected', 'error',
+            'valid'));
+            document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+            document.querySelectorAll('input.error, input.valid, select.error, select.valid').forEach(el => {
+                el.classList.remove('error', 'valid');
+            });
+            prefillFromAuth();
+            setIssuedDate();
+            renderPreview();
+            showToast('Form has been reset.', 'success');
+        }
+
+        // ============ TOAST ============
+        function showToast(message, type) {
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // ============ INITIAL SETUP ============
+        showLoading(true);
+        showLocked(false);
+        showCardSection(false);
+    </script>
+</body>
+</html>
