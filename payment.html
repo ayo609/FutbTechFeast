@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment — FUTB TechFest 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue:#060E1A;--navy:#0B1D3A;--navy-light:#142D5E;
+            --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#CCFBF1;
+            --sky:#38BDF8;--sky-light:#7DD3FC;--sky-pale:#E0F2FE;
+            --white:#FFFFFF;--crimson:#EF4444;--green:#10B981;--orange:#F59E0B;
+            --card:rgba(11,29,58,0.55);--glass:rgba(255,255,255,0.04);
+            --border:rgba(56,189,248,0.2);--border-teal:rgba(20,184,166,0.4);
+            --text:#E2E8F0;--text-bright:#F8FAFC;--muted:#94A3B8;--muted-light:#CBD5E1;
+            --shadow-teal:0 0 30px rgba(20,184,166,0.15);
+            --shadow-card:0 8px 40px rgba(0,0,0,0.3);
+            --radius-sm:8px;--radius:12px;--radius-lg:20px;
+            --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--teal) var(--deep-blue)}
+        html::-webkit-scrollbar{width:6px}
+        html::-webkit-scrollbar-track{background:var(--deep-blue)}
+        html::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px}
+        body{
+            font-family:'Space Grotesk',sans-serif;background:var(--deep-blue);color:var(--text);
+            min-height:100vh;-webkit-font-smoothing:antialiased;padding-bottom:90px;position:relative;
+        }
+        body::before{
+            content:'';position:fixed;inset:0;
+            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none;z-index:0;opacity:0.3;
+        }
+        .top-nav{
+            position:sticky;top:0;z-index:100;background:rgba(6,14,26,0.85);
+            backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 5%;
+            display:flex;align-items:center;justify-content:space-between;height:64px;
+        }
+        .nav-left{display:flex;align-items:center;gap:1rem}
+        .back-btn{color:var(--muted);text-decoration:none;font-size:0.82rem;font-weight:500;letter-spacing:0.04em;transition:color var(--transition);display:flex;align-items:center;gap:0.3rem}
+        .back-btn:hover{color:var(--teal-light)}
+        .nav-logo{font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--teal-light),var(--sky-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+        .user-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;font-family:'JetBrains Mono',monospace;border:2px solid transparent;cursor:pointer;transition:all var(--transition);text-decoration:none}
+        .user-avatar:hover{border-color:var(--teal-light);box-shadow:0 0 20px rgba(20,184,166,0.3)}
+        .main-content{position:relative;z-index:1;max-width:650px;margin:0 auto;padding:2rem 5%}
+        .page-title{font-size:1.4rem;font-weight:700;color:var(--text-bright);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+        .page-subtitle{font-size:0.82rem;color:var(--muted);margin-bottom:1.5rem}
+        .detail-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.2rem}
+        .detail-card-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border)}
+        .detail-card-header h3{font-size:0.95rem;font-weight:700;color:var(--text-bright)}
+        .detail-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;font-size:0.84rem;border-bottom:1px solid rgba(255,255,255,0.03)}
+        .detail-row:last-child{border-bottom:none}
+        .detail-label{color:var(--muted);min-width:100px}
+        .detail-value{color:var(--text-bright);font-weight:500;text-align:right}
+        
+        /* Multi-item Breakdown Styling */
+        .items-list-container {margin:0.6rem 0;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:0.3rem 0.8rem;}
+        .item-breakdown-row {display:flex;justify-content:space-between;padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.82rem;}
+        .item-breakdown-row:last-child {border-bottom:none;}
+        .item-meta-details {font-size:0.74rem;color:var(--muted);margin-top:0.25rem;display:flex;gap:0.5rem;flex-wrap:wrap;}
+
+        .total-row{font-size:1.1rem;font-weight:700;color:var(--teal-light);padding-top:0.8rem;margin-top:0.4rem;border-top:1px solid var(--border-teal)}
+        .total-row .detail-value{font-family:'Bebas Neue',cursive;font-size:1.8rem;color:var(--teal-light);letter-spacing:0.03em}
+        .custom-name-tag{display:inline-block;background:rgba(20,184,166,0.1);border:1px dashed var(--border-teal);padding:0.15rem 0.4rem;border-radius:4px;font-size:0.7rem;color:var(--teal-light);font-style:italic}
+        .tracking-id-tag{display:inline-block;background:rgba(20,184,166,0.08);border:1px solid var(--border-teal);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.72rem;font-family:'JetBrains Mono',monospace;color:var(--teal-light);letter-spacing:0.05em}
+        .status-badge{display:inline-block;padding:0.3rem 0.9rem;border-radius:100px;font-size:0.68rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+        .status-pending{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#FBBF24}
+        .status-proof{background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:#7DD3FC}
+        .status-confirmed{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7}
+        .status-delivered{background:rgba(20,184,166,0.12);border:1px solid rgba(20,184,166,0.3);color:#5EEAD4}
+        .status-cancelled{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
+        .bank-box{background:rgba(20,184,166,0.05);border:1px solid var(--border-teal);border-radius:var(--radius-sm);padding:1.2rem}
+        .bank-box .bank-row{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;font-size:0.84rem;border-bottom:1px solid rgba(255,255,255,0.04);flex-wrap:wrap;gap:0.5rem}
+        .bank-row:last-child{border-bottom:none}
+        .bank-label{color:var(--muted);font-weight:500}
+        .bank-value{color:var(--text-bright);font-weight:600;font-family:'JetBrains Mono',monospace;font-size:0.82rem;letter-spacing:0.03em}
+        .copy-btn{background:rgba(20,184,166,0.15);border:1px solid rgba(20,184,166,0.3);color:var(--teal-light);padding:0.3rem 0.7rem;border-radius:100px;font-size:0.68rem;cursor:pointer;font-weight:600;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;white-space:nowrap}
+        .copy-btn:hover{background:rgba(20,184,166,0.25)}
+        .ref-example{font-size:0.72rem;color:var(--muted);margin-top:0.5rem;font-style:italic}
+        .warning-note{font-size:0.7rem;color:#FBBF24;margin-top:0.6rem;display:flex;align-items:center;gap:0.3rem}
+        .upload-area{border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;cursor:pointer;transition:all var(--transition);position:relative}
+        .upload-area:hover{border-color:var(--border-teal);background:rgba(20,184,166,0.03)}
+        .upload-area.drag-over{border-color:var(--teal-light);background:rgba(20,184,166,0.08)}
+        .upload-icon{font-size:2.5rem;margin-bottom:0.5rem}
+        .upload-area p{font-size:0.82rem;color:var(--muted-light)}
+        .upload-area .upload-hint{font-size:0.7rem;color:var(--muted);margin-top:0.3rem}
+        .upload-area input[type="file"]{display:none}
+        .preview-container{display:none;margin-top:1rem;text-align:center}
+        .preview-container.active{display:block}
+        .preview-img{max-width:100%;max-height:250px;border-radius:var(--radius-sm);border:1px solid var(--border)}
+        .preview-actions{display:flex;gap:0.6rem;justify-content:center;margin-top:0.8rem}
+        .file-info{font-size:0.72rem;color:var(--muted);margin-top:0.3rem}
+        .tracker{display:flex;align-items:center;justify-content:space-between;position:relative;padding:0 1rem;margin:1rem 0}
+        .tracker-step{display:flex;flex-direction:column;align-items:center;gap:0.5rem;position:relative;z-index:2;text-align:center;flex:1}
+        .tracker-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--glass);border:2px solid var(--border);transition:all var(--transition)}
+        .tracker-dot.done{background:var(--green);border-color:var(--green);color:white}
+        .tracker-dot.active{background:rgba(56,189,248,0.2);border-color:var(--sky);color:var(--text-bright);animation:pulse-dot 1.5s infinite}
+        @keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,0.4)}50%{box-shadow:0 0 0 12px rgba(56,189,248,0)}}
+        .tracker-label{font-size:0.62rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+        .tracker-label.done{color:var(--green)}.tracker-label.active{color:var(--sky-light)}
+        .tracker-line{position:absolute;top:20px;left:15%;right:15%;height:2px;background:var(--border);z-index:1}
+        .tracker-line-fill{height:100%;background:var(--green);transition:width 0.6s ease;border-radius:2px}
+        .btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);padding:0.8rem 1.8rem;border-radius:100px;font-weight:700;font-size:0.85rem;border:none;cursor:pointer;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;text-decoration:none;display:inline-block;box-shadow:0 6px 25px rgba(20,184,166,0.25);width:100%;text-align:center}
+        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 35px rgba(20,184,166,0.45)}
+        .btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+        .btn-wa{background:#25D366;color:white;padding:0.8rem 1.8rem;border-radius:100px;font-weight:700;font-size:0.85rem;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;width:100%;text-align:center;box-shadow:0 6px 25px rgba(37,211,102,0.25)}
+        .btn-wa:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(37,211,102,0.45)}
+        .btn-outline{background:transparent;border:1.5px solid rgba(148,163,184,0.3);color:var(--text-bright);padding:0.8rem 1.8rem;border-radius:100px;font-weight:600;font-size:0.85rem;cursor:pointer;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;text-decoration:none;display:inline-block;width:100%;text-align:center}
+        .btn-outline:hover{border-color:var(--teal-light);color:var(--teal-light)}
+        .btn-spinner{display:none;width:18px;height:18px;border:2.5px solid transparent;border-top-color:var(--white);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:0.5rem;vertical-align:middle}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .notes-card{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:1rem 1.2rem;font-size:0.76rem;color:#FBBF24;line-height:1.6}
+        .notes-card strong{color:#FCD34D}
+        .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(6,14,26,0.92);backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:0.6rem 5%;justify-content:space-around;align-items:center}
+        .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:0.25rem;text-decoration:none;color:var(--muted);font-size:1.3rem;transition:all var(--transition);padding:0.3rem 0.6rem;border-radius:var(--radius-sm)}
+        .bottom-nav a.active{color:var(--teal-light);background:rgba(20,184,166,0.1)}
+        .bottom-nav a span{font-size:0.6rem;letter-spacing:0.05em;font-weight:500}
+        .modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all var(--transition);padding:1rem}
+        .modal-overlay.active{opacity:1;visibility:visible}
+        .modal-box{background:var(--navy);border:1px solid var(--border-teal);border-radius:var(--radius-lg);padding:2rem 1.8rem;max-width:440px;width:100%;text-align:center;position:relative;box-shadow:0 30px 70px rgba(0,0,0,0.6);transform:translateY(20px);transition:transform 0.5s cubic-bezier(0.4,0,0.2,1)}
+        .modal-overlay.active .modal-box{transform:translateY(0)}
+        .modal-icon-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.8rem}
+        .modal-icon-wrap.success{background:rgba(16,185,129,0.12);border:2px solid rgba(16,185,129,0.3)}
+        .modal-icon-wrap.error{background:rgba(239,68,68,0.12);border:2px solid rgba(239,68,68,0.3)}
+        .modal-box h3{font-size:1.2rem;font-weight:700;margin-bottom:0.4rem;color:var(--text-bright)}
+        .modal-box p{color:var(--muted-light);font-size:0.85rem;line-height:1.6;margin-bottom:1.2rem}
+        .modal-close{position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+        .modal-close:hover{color:var(--text-bright);background:rgba(255,255,255,0.06)}
+        .modal-btn{padding:0.7rem 1.5rem;border-radius:100px;font-weight:700;font-size:0.85rem;cursor:pointer;border:none;letter-spacing:0.04em;transition:all var(--transition);font-family:'Space Grotesk',sans-serif;display:inline-block;text-decoration:none}
+        .modal-btn-primary{background:linear-gradient(135deg,var(--teal),var(--teal-light));color:var(--white);box-shadow:0 6px 25px rgba(20,184,166,0.3)}
+        .modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(20,184,166,0.5)}
+        .modal-btn-secondary{background:transparent;border:1.5px solid rgba(148,163,184,0.3);color:var(--text-bright);margin-left:0.5rem}
+        .modal-btn-secondary:hover{border-color:var(--teal-light);color:var(--teal-light)}
+        .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--navy);border:1px solid var(--border-teal);color:var(--text-bright);padding:0.8rem 1.5rem;border-radius:100px;font-size:0.82rem;font-weight:500;z-index:500;opacity:0;visibility:hidden;transition:all var(--transition);box-shadow:0 10px 30px rgba(0,0,0,0.5);white-space:nowrap}
+        .toast.show{opacity:1;visibility:visible;bottom:120px}
+        .skeleton{background:rgba(255,255,255,0.04);border-radius:var(--radius-sm);animation:pulse 1.5s infinite}
+        .skeleton-text{height:14px;margin:8px 0;width:80%;border-radius:4px}.skeleton-text.short{width:50%}
+        @keyframes pulse{0%,100%{opacity:0.4}50%{opacity:0.7}}
+        @media(max-width:768px){
+            .bottom-nav{display:flex}body{padding-bottom:80px}.main-content{padding:1.5rem 4%}
+            .page-title{font-size:1.2rem}.bank-box .bank-row{flex-direction:column;align-items:flex-start;gap:0.3rem}
+            .tracker-label{font-size:0.55rem}
+        }
+        @media(max-width:480px){
+            .top-nav{padding:0 3%;height:56px}.nav-logo{font-size:1.1rem}
+            .detail-row{flex-direction:column;align-items:flex-start;gap:0.2rem}.detail-value{text-align:left}
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="orders.html" class="back-btn">← Back to Orders</a>
+            <a href="home.html" class="nav-logo">TechFest 2.0</a>
+        </div>
+        <a href="profile.html" class="user-avatar" id="userAvatar">U</a>
+    </nav>
+
+    <div class="main-content" id="mainContent">
+        <h1 class="page-title">💳 Complete Your Payment</h1>
+        <p class="page-subtitle">Follow the steps below to complete your merchandise payment</p>
+        <div id="loadingSkeleton">
+            <div class="detail-card"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div></div>
+            <div class="detail-card"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div></div>
+        </div>
+        <div id="contentContainer" style="display:none;"></div>
+    </div>
+
+    <nav class="bottom-nav" id="bottomNav">
+        <a href="home.html">🏠<span>Home</span></a>
+        <a href="my-registration.html">📝<span>Registration</span></a>
+        <a href="orders.html" class="active">🛍️<span>Orders</span></a>
+        <a href="profile.html">👤<span>Profile</span></a>
+    </nav>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="modalCloseBtn">✕</button>
+            <div class="modal-icon-wrap" id="modalIconWrap"><span id="modalIcon">✅</span></div>
+            <h3 id="modalTitle">Success</h3>
+            <p id="modalMessage">Action completed.</p>
+            <div id="modalButtons"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth=auth;window.firebaseDb=db;
+        window.firebaseOnAuthStateChanged=onAuthStateChanged;
+        window.firebaseGetDoc=getDoc;window.firebaseDoc=doc;
+        window.firebaseUpdateDoc=updateDoc;window.firebaseOnSnapshot=onSnapshot;
+        console.log("✅ Firebase initialized & exposed");
+    </script>
+
+    <script>
+        const PAYMENT_CONFIG={bankName:'PALMPAY',accountName:'Taufeek Muftau',accountNumber:'9167378733',whatsappNumber:'234XXXXXXXXXX',whatsappMessage:(tid,name,amt)=>`Hello, I've made payment for TechFest 2.0.%0A%0ATracking ID: ${tid}%0AName: ${name}%0AAmount: ₦${amt.toLocaleString()}%0A%0AProof of payment has been uploaded to my account.`};
+        let currentUser=null,orderData=null,orderId=null,proofBase64=null,proofFileName=null;
+        const loadingSkeleton=document.getElementById('loadingSkeleton'),contentContainer=document.getElementById('contentContainer');
+        const userAvatar=document.getElementById('userAvatar'),modalOverlay=document.getElementById('modalOverlay');
+        const modalIconWrap=document.getElementById('modalIconWrap'),modalIcon=document.getElementById('modalIcon');
+        const modalTitle=document.getElementById('modalTitle'),modalMessage=document.getElementById('modalMessage');
+        const modalButtons=document.getElementById('modalButtons'),toast=document.getElementById('toast');
+
+        function waitForFirebase(cb){if(window.firebaseOnAuthStateChanged&&window.firebaseAuth){cb()}else{setTimeout(()=>waitForFirebase(cb),150)}}
+        waitForFirebase(()=>{window.firebaseOnAuthStateChanged(window.firebaseAuth,async(user)=>{if(!user){window.location.href='login.html';return}currentUser=user;userAvatar.textContent=(user.displayName||user.email||'U').charAt(0).toUpperCase();await initPage()})});
+
+        async function initPage(){const p=new URLSearchParams(window.location.search);orderId=p.get('orderId');if(!orderId){showNoOrderId();return}await loadOrder();setupRealTimeListener()}
+        function showNoOrderId(){loadingSkeleton.style.display='none';contentContainer.style.display='block';contentContainer.innerHTML='<div class="detail-card" style="text-align:center;padding:3rem 2rem;"><div style="font-size:3rem;">📭</div><h3 style="color:var(--text-bright);">No Order Specified</h3><p style="color:var(--muted);margin-bottom:1.5rem;">Please go to your orders page to select an order for payment.</p><a href="orders.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.8rem 2rem;">Go to My Orders</a></div>'}
+
+        async function loadOrder(){try{const ds=await window.firebaseGetDoc(window.firebaseDoc(window.firebaseDb,'merchandise_orders',orderId));if(!ds.exists()){loadingSkeleton.style.display='none';contentContainer.style.display='block';contentContainer.innerHTML='<div class="detail-card" style="text-align:center;padding:3rem 2rem;"><div style="font-size:3rem;">🔍</div><h3 style="color:var(--text-bright);">Order Not Found</h3><p style="color:var(--muted);">This order doesn\'t exist.</p><a href="orders.html" class="btn-primary" style="display:inline-block;width:auto;padding:0.8rem 2rem;">Go to My Orders</a></div>';return}orderData=ds.data();orderData.docId=ds.id;console.log('✅ Loaded Order Data:', orderData);renderPage()}catch(e){console.error(e);showToast('Failed to load order.')}}
+        function setupRealTimeListener(){window.firebaseOnSnapshot(window.firebaseDoc(window.firebaseDb,'merchandise_orders',orderId),(ds)=>{if(ds.exists()){orderData=ds.data();orderData.docId=ds.id;renderPage()}})}
+
+        function renderPage(){
+            loadingSkeleton.style.display='none';
+            contentContainer.style.display='block';
+            
+            const s=orderData.status||'pending_payment';
+            const im={tshirt:'👕',cap:'🧢',jotter:'📓',bag:'👜',bundle:'🎽'};
+            const tid=orderData.trackingId||orderData.orderId||'TECH-XXXX';
+            
+            const sc={
+                pending_payment:{class:'status-pending',label:'Pending Payment'},
+                proof_sent:{class:'status-proof',label:'Awaiting Verification'},
+                confirmed:{class:'status-confirmed',label:'Payment Approved ✅'},
+                delivered:{class:'status-delivered',label:'Delivered 🎁'},
+                cancelled:{class:'status-cancelled',label:'Cancelled'}
+            }[s]||{class:'status-pending',label:'Pending'};
+            
+            const s1=s!=='pending_payment',s2a=s==='proof_sent',s2d=s==='confirmed'||s==='delivered',s3d=s==='confirmed'||s==='delivered',tfw=s3d?'100%':s2d?'50%':s1?'25%':'0%';
+
+            // --- BUILD DYNAMIC ITEM BREAKDOWN ---
+            let itemsHTML = '';
+            let totalItemsCount = 0;
+
+            if (orderData.items && Array.isArray(orderData.items)) {
+                // Multi-item Order Structure (Matched with Updated Orders Page Layout)
+                itemsHTML += '<div class="items-list-container">';
+                orderData.items.forEach(item => {
+                    const itemIcon = im[item.itemType] || '📦';
+                    totalItemsCount += (parseInt(item.quantity) || 1);
+                    itemsHTML += `
+                        <div class="item-breakdown-row">
+                            <div>
+                                <span style="color:var(--text-bright); font-weight:500;">${itemIcon} ${item.itemName}</span>
+                                <div class="item-meta-details">
+                                    ${item.size ? `<span>Size: ${item.size}</span>` : ''}
+                                    ${item.customName ? `<span class="custom-name-tag">🎨 ${item.customName}</span>` : ''}
+                                    <span>Qty: ${item.quantity}</span>
+                                </div>
+                            </div>
+                            <span style="color:var(--text-bright); font-family:'JetBrains Mono',monospace;">₦${(item.unitPrice * item.quantity).toLocaleString()}</span>
+                        </div>`;
+                });
+                itemsHTML += '</div>';
+            } else {
+                // Fallback Legacy Single Item Support
+                const singleIcon = im[orderData.itemType] || '📦';
+                totalItemsCount = orderData.quantity || 1;
+                itemsHTML += `
+                    <div class="detail-row"><span class="detail-label">Item</span><span class="detail-value">${singleIcon} ${orderData.itemName}</span></div>
+                    ${orderData.size ? `<div class="detail-row"><span class="detail-label">Size</span><span class="detail-value">${orderData.size}</span></div>` : ''}
+                    ${orderData.customName ? `<div class="detail-row"><span class="detail-label">Name on Back</span><span class="detail-value"><span class="custom-name-tag">🎨 ${orderData.customName}</span></span></div>` : ''}
+                    <div class="detail-row"><span class="detail-label">Quantity</span><span class="detail-value">${orderData.quantity}</span></div>
+                    <div class="detail-row"><span class="detail-label">Unit Price</span><span class="detail-value">₦${(orderData.unitPrice?.toLocaleString() || '0')}</span></div>`;
+            }
+
+            // Assemble main layouts
+            contentContainer.innerHTML='<div class="detail-card"><div class="detail-card-header"><h3>📋 Order Summary</h3><span class="status-badge '+sc.class+'">'+sc.label+'</span></div><div class="detail-row"><span class="detail-label">Tracking ID</span><span class="detail-value"><span class="tracking-id-tag">📦 '+tid+'</span></span></div>'+itemsHTML+'<div class="detail-row total-row"><span class="detail-label">Total to Pay</span><span class="detail-value">₦'+(orderData.totalPrice?.toLocaleString()||'0')+'</span></div></div>'+(s==='cancelled'?'<div class="detail-card" style="text-align:center;padding:2rem;"><div style="font-size:3rem;">❌</div><h3 style="color:var(--text-bright);">Order Cancelled</h3><p style="color:var(--muted);">This order has been cancelled.</p><a href="orders.html" class="btn-outline" style="display:inline-block;width:auto;padding:0.7rem 2rem;">Back to Orders</a></div>':'')+(s==='confirmed'||s==='delivered'?'<div class="detail-card" style="text-align:center;padding:2rem;border-color:rgba(16,185,129,0.4);"><div style="font-size:3rem;">✅</div><h3 style="color:#6EE7B7;">Payment Approved!</h3><p style="color:var(--muted-light);">'+(s==='delivered'?'Your items are ready!':'Items ready at Day 1 Desk.')+'</p><a href="orders.html" class="btn-outline" style="display:inline-block;width:auto;padding:0.7rem 2rem;">Back to Orders</a></div>':'')+(s!=='cancelled'&&s!=='confirmed'&&s!=='delivered'?'<div class="detail-card"><div class="detail-card-header"><h3>🏦 Bank Transfer Details</h3></div><div class="bank-box"><div class="bank-row"><span class="bank-label">Bank</span><span class="bank-value">'+PAYMENT_CONFIG.bankName+'</span></div><div class="bank-row"><span class="bank-label">Account Name</span><span class="bank-value">'+PAYMENT_CONFIG.accountName+'</span></div><div class="bank-row"><span class="bank-label">Account Number</span><span class="bank-value">'+PAYMENT_CONFIG.accountNumber+'</span><button class="copy-btn" id="copyAccountBtn">📋 Copy</button></div><div class="bank-row"><span class="bank-label">Amount</span><span class="bank-value" style="color:var(--teal-light);">₦'+(orderData.totalPrice?.toLocaleString()||'0')+'</span></div><div class="ref-example">📌 Reference: <strong>Your Name + Tracking ID</strong></div><div class="warning-note">⚠️ Use EXACT reference format</div></div></div><div class="detail-card"><div class="detail-card-header"><h3>📎 Upload Proof</h3></div>'+(proofBase64?'':'<div class="upload-area" id="uploadArea"><div class="upload-icon">📤</div><p>Click or drag & drop</p><p class="upload-hint">JPG, PNG (Max 5MB)</p><input type="file" id="fileInput" accept="image/jpeg,image/png"></div>')+'<div class="preview-container '+(proofBase64?'active':'')+'" id="previewContainer"><img src="'+(proofBase64||'')+'" alt="Proof" class="preview-img"><p class="file-info">'+(proofFileName||'')+'</p><div class="preview-actions"><button class="copy-btn" id="changeFileBtn">🔄 Change</button></div></div>'+(proofBase64?'<button class="btn-primary" id="uploadBtn" style="margin-top:1rem;"><span class="btn-spinner" id="uploadSpinner"></span>Upload Proof</button>':'')+(s==='proof_sent'&&orderData.paymentProofBase64?'<div style="margin-top:1rem;padding:1rem;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.3);border-radius:var(--radius-sm);text-align:center;"><p style="color:var(--sky-light);font-weight:600;margin-bottom:0.5rem;">✅ Awaiting Verification</p><img src="'+orderData.paymentProofBase64+'" alt="Uploaded" style="max-width:100%;max-height:200px;border-radius:var(--radius-sm);border:1px solid var(--border);"></div>':'')+'</div><div class="detail-card"><div class="detail-card-header"><h3>📱 Confirm via WhatsApp</h3></div><a href="https://wa.me/'+PAYMENT_CONFIG.whatsappNumber+'?text='+PAYMENT_CONFIG.whatsappMessage(tid,currentUser.displayName||'User',orderData.totalPrice||0)+'" target="_blank" class="btn-wa">💬 Send WhatsApp Confirmation</a></div><div class="detail-card"><div class="detail-card-header"><h3>📋 Payment Status</h3></div><div class="tracker"><div class="tracker-line"><div class="tracker-line-fill" style="width:'+tfw+';"></div></div><div class="tracker-step"><div class="tracker-dot '+(s1?'done':'active')+'">'+(s1?'✓':'1')+'</div><span class="tracker-label '+(s1?'done':'active')+'">Proof Uploaded</span></div><div class="tracker-step"><div class="tracker-dot '+(s2d?'done':s2a?'active':'')+'">'+(s2d?'✓':'2')+'</div><span class="tracker-label '+(s2d?'done':s2a?'active':'')+'">Verification</span></div><div class="tracker-step"><div class="tracker-dot '+(s3d?'done':'')+'">'+(s3d?'✓':'3')+'</div><span class="tracker-label '+(s3d?'done':'')+'">Approved</span></div></div></div>':'')+'<div class="notes-card"><strong>📌 Important:</strong><br>⏰ Deadline: <strong>14 July 2026</strong><br>📦 Collect at <strong>Day 1 Desk</strong><br>❌ No refunds after confirmation</div><div style="display:flex;gap:0.8rem;margin-top:1.5rem;flex-wrap:wrap;"><a href="orders.html" class="btn-outline" style="flex:1;min-width:150px;">← Back to Orders</a><a href="home.html" class="btn-outline" style="flex:1;min-width:150px;">🏠 Dashboard</a></div>';
+            
+            bindDynamicEvents();
+        }
+
+        function bindDynamicEvents(){const cb=document.getElementById('copyAccountBtn');if(cb)cb.addEventListener('click',copyAccountNumber);const ua=document.getElementById('uploadArea'),fi=document.getElementById('fileInput');if(ua&&fi){ua.addEventListener('click',()=>fi.click());fi.addEventListener('change',handleFileSelect);['dragenter','dragover'].forEach(ev=>ua.addEventListener(ev,e=>{e.preventDefault();ua.classList.add('drag-over')}));['dragleave','drop'].forEach(ev=>ua.addEventListener(ev,e=>{e.preventDefault();ua.classList.remove('drag-over')}));ua.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);fi.files=dt.files;handleFileSelect({target:fi})}})}const cfb=document.getElementById('changeFileBtn');if(cfb)cfb.addEventListener('click',changeFile);const ub=document.getElementById('uploadBtn');if(ub)ub.addEventListener('click',uploadProof)}
+        function handleFileSelect(e){const f=e.target.files[0];if(!f)return;if(!['image/jpeg','image/png'].includes(f.type)){showToast('JPG or PNG only');return}if(f.size>5*1024*1024){showToast('Max 5MB');return}proofFileName=f.name;const r=new FileReader();r.onload=function(ev){proofBase64=ev.target.result;if(f.size>1*1024*1024){compressImage(proofBase64,800,0.7,c=>{proofBase64=c;renderPage()})}else{renderPage()}};r.readAsDataURL(f)}
+        function compressImage(d,m,q,cb){const i=new Image();i.onload=function(){const cv=document.createElement('canvas');let w=i.width,h=i.height;if(w>m){h=(m/w)*h;w=m}cv.width=w;cv.height=h;cv.getContext('2d').drawImage(i,0,0,w,h);cb(cv.toDataURL('image/jpeg',q))};i.src=d}
+        function changeFile(){proofBase64=null;proofFileName=null;renderPage()}
+        async function uploadProof(){if(!proofBase64){showToast('Select proof first');return}const btn=document.getElementById('uploadBtn'),sp=document.getElementById('uploadSpinner');btn.disabled=true;sp.style.display='inline-block';try{await window.firebaseUpdateDoc(window.firebaseDoc(window.firebaseDb,'merchandise_orders',orderId),{paymentProofBase64:proofBase64,paymentProofFileName:proofFileName,paymentProofUploadedAt:new Date().toISOString(),status:'proof_sent'});console.log('Proof uploaded successfully');btn.disabled=false;sp.style.display='none';showModal('Proof Uploaded! ✅','Your proof has been submitted. Admin will verify shortly.','success')}catch(e){btn.disabled=false;sp.style.display='none';showToast('Upload failed')}}
+        function copyAccountNumber(){navigator.clipboard.writeText(PAYMENT_CONFIG.accountNumber).then(()=>showToast('Copied! 📋')).catch(()=>showToast('Copy manually'))}
+        function showModal(t,m,ty='success'){modalIconWrap.className='modal-icon-wrap '+ty;modalIcon.textContent=ty==='success'?'✅':'❌';modalTitle.textContent=t;modalMessage.textContent=m;modalButtons.innerHTML='<button class="modal-btn modal-btn-primary" id="modalGotIt">Got It</button>';modalOverlay.classList.add('active');document.body.style.overflow='hidden';document.getElementById('modalGotIt').addEventListener('click',closeModal)}
+        function closeModal(){modalOverlay.classList.remove('active');document.body.style.overflow=''}
+        document.getElementById('modalCloseBtn').addEventListener('click',closeModal);modalOverlay.addEventListener('click',function(e){if(e.target===this)closeModal()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+        function showToast(m,d=3000){toast.textContent=m;toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.classList.remove('show'),d)}
+    </script>
+</body>
+</html>
