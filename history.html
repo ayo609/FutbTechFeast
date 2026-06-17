@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History — FUTB TechFest 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue:#060E1A;--navy:#0B1D3A;--navy-light:#142D5E;
+            --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#CCFBF1;
+            --sky:#38BDF8;--sky-light:#7DD3FC;--sky-pale:#E0F2FE;
+            --white:#FFFFFF;--crimson:#EF4444;--green:#10B981;--orange:#F59E0B;
+            --card:rgba(11,29,58,0.55);--glass:rgba(255,255,255,0.04);
+            --border:rgba(56,189,248,0.2);--border-teal:rgba(20,184,166,0.4);
+            --text:#E2E8F0;--text-bright:#F8FAFC;--muted:#94A3B8;--muted-light:#CBD5E1;
+            --shadow-teal:0 0 30px rgba(20,184,166,0.15);
+            --shadow-card:0 8px 40px rgba(0,0,0,0.3);
+            --radius-sm:8px;--radius:12px;--radius-lg:20px;
+            --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--teal) var(--deep-blue)}
+        html::-webkit-scrollbar{width:6px}
+        html::-webkit-scrollbar-track{background:var(--deep-blue)}
+        html::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px}
+        body{
+            font-family:'Space Grotesk',sans-serif;background:var(--deep-blue);color:var(--text);
+            min-height:100vh;-webkit-font-smoothing:antialiased;padding-bottom:90px;position:relative;
+        }
+        body::before{
+            content:'';position:fixed;inset:0;
+            background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none;z-index:0;opacity:0.3;
+        }
+        .top-nav{
+            position:sticky;top:0;z-index:100;background:rgba(6,14,26,0.85);
+            backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 5%;
+            display:flex;align-items:center;justify-content:space-between;height:64px;
+        }
+        .nav-left{display:flex;align-items:center;gap:1rem}
+        .back-btn{color:var(--muted);text-decoration:none;font-size:0.82rem;font-weight:500;letter-spacing:0.04em;transition:color var(--transition);display:flex;align-items:center;gap:0.3rem}
+        .back-btn:hover{color:var(--teal-light)}
+        .nav-logo{font-family:'Bebas Neue',cursive;font-size:1.4rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--teal-light),var(--sky-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+        
+        .main-content{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:2rem 5%}
+        .page-header{margin-bottom:2rem}
+        .page-title{font-size:1.6rem;font-weight:700;color:var(--text-bright);margin-bottom:0.3rem}
+        .page-subtitle{font-size:0.85rem;color:var(--muted)}
+
+        .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+        .metric-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;display:flex;flex-direction:column;gap:0.3rem}
+        .metric-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);font-weight:600}
+        .metric-value{font-size:1.4rem;font-weight:700;color:var(--text-bright);font-family:'JetBrains Mono',monospace}
+        .metric-value.total-spent{color:var(--teal-light)}
+
+        .filter-bar{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius);padding:0.8rem;margin-bottom:1.5rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+        .search-wrapper{flex:1;min-width:200px;position:relative}
+        .search-input{width:100%;background:rgba(0,0,0,0.2);border:1px solid var(--border);padding:0.6rem 1rem;border-radius:var(--radius-sm);color:var(--text-bright);font-family:inherit;font-size:0.82rem;transition:all var(--transition)}
+        .search-input:focus{outline:none;border-color:var(--teal-light)}
+        .filter-select{background:var(--navy);border:1px solid var(--border);padding:0.6rem 1rem;border-radius:var(--radius-sm);color:var(--text-bright);font-family:inherit;font-size:0.82rem;cursor:pointer}
+
+        .orders-container{display:flex;flex-direction:column;gap:1rem}
+        .order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all var(--transition)}
+        .order-card:hover{border-color:rgba(56,189,248,0.4);background:rgba(11,29,58,0.7)}
+        .order-summary{padding:1.2rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;gap:1rem;flex-wrap:wrap}
+        
+        .order-main-info{display:flex;align-items:center;gap:1rem;flex:1}
+        .order-icon{width:44px;height:44px;border-radius:var(--radius-sm);background:rgba(20,184,166,0.1);border:1px solid rgba(20,184,166,0.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--teal-light)}
+        .order-title-meta{display:flex;flex-direction:column;gap:0.2rem}
+        .order-item-title{font-size:0.95rem;font-weight:600;color:var(--text-bright)}
+        .order-date{font-size:0.75rem;color:var(--muted)}
+        
+        .order-pricing-status{display:flex;align-items:center;gap:1.5rem;text-align:right}
+        .order-price{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--text-bright)}
+        
+        .status-badge{font-size:0.68rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;padding:0.3rem 0.7rem;border-radius:100px;display:inline-block}
+        .status-badge.success{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:var(--green)}
+        .status-badge.pending{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:var(--orange)}
+        .status-badge.failed{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:var(--crimson)}
+
+        .order-details-pane{display:none;background:rgba(0,0,0,0.2);border-top:1px solid rgba(255,255,255,0.05);padding:1.2rem;animation:slideDown 0.3s cubic-bezier(0.4,0,0.2,1)}
+        .order-card.expanded .order-details-pane{display:block}
+        .details-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem 2rem}
+        .details-group{display:flex;flex-direction:column;gap:0.2rem}
+        .details-label{font-size:0.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:500}
+        .details-val{font-size:0.82rem;color:var(--text-bright);font-family:'Space Grotesk',sans-serif}
+        .details-val.mono{font-family:'JetBrains Mono',monospace;letter-spacing:-0.02em}
+
+        @keyframes slideDown{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+        .state-container{text-align:center;padding:4rem 2rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);display:none}
+        .state-icon{font-size:2.5rem;margin-bottom:1rem;opacity:0.7}
+        .state-text{font-size:0.9rem;color:var(--muted)}
+        .shimmer-loader{height:80px;background:linear-gradient(90deg,rgba(255,255,255,0.03) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.03) 75%);background-size:200% 100%;animation:loadingShimmer 1.5s infinite;border-radius:var(--radius);margin-bottom:1rem}
+        @keyframes loadingShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+        .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(6,14,26,0.92);backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:0.6rem 5%;justify-content:space-around;align-items:center}
+        .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:0.25rem;text-decoration:none;color:var(--muted);font-size:1.3rem;transition:all var(--transition);padding:0.3rem 0.6rem;border-radius:var(--radius-sm)}
+        .bottom-nav a.active{color:var(--teal-light);background:rgba(20,184,166,0.1)}
+        .bottom-nav a span{font-size:0.6rem;letter-spacing:0.05em;font-weight:500}
+
+        @media(max-width:768px){
+            .bottom-nav{display:flex}
+            .metrics-grid{grid-template-columns:1fr;gap:0.8rem}
+            .order-summary{flex-direction:column;align-items:flex-start}
+            .order-pricing-status{width:100%;justify-content:space-between;text-align:left;border-top:1px solid rgba(255,255,255,0.05);padding-top:0.8rem;margin-top:0.2rem}
+            .details-grid{grid-template-columns:1fr;gap:0.8rem}
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="home.html" class="back-btn">← Dashboard</a>
+            <a href="home.html" class="nav-logo">TechFest 2.0</a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">🛍️ Transaction History</h1>
+            <p class="page-subtitle">Track payments, registration passes, and event merchandise invoices</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">Total Volume</span>
+                <span class="metric-value total-spent" id="statTotalSpent">₦0.00</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Approved Orders</span>
+                <span class="metric-value" id="statApprovedCount">0</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Awaiting Review</span>
+                <span class="metric-value" id="statPendingCount" style="color:var(--orange);">0</span>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search ID, tier, reference...">
+            </div>
+            <select id="statusFilter" class="filter-select">
+                <option value="all">All Transactions</option>
+                <option value="success">Successful</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed / Cancelled</option>
+            </select>
+        </div>
+
+        <div id="loadingState">
+            <div class="shimmer-loader"></div>
+            <div class="shimmer-loader"></div>
+        </div>
+
+        <div id="emptyState" class="state-container">
+            <div class="state-icon">📦</div>
+            <p class="state-text">No matching logs or transactional receipts found on your profile.</p>
+        </div>
+
+        <div id="ordersContainer" class="orders-container"></div>
+    </div>
+
+    <nav class="bottom-nav" id="bottomNav">
+        <a href="home.html">🏠<span>Home</span></a>
+        <a href="my-registration.html">📝<span>Registration</span></a>
+        <a href="history.html" class="active">🛍️<span>History</span></a>
+        <a href="profile.html">👤<span>Profile</span></a>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+            authDomain: "futbtechfeast.firebaseapp.com",
+            projectId: "futbtechfeast",
+            storageBucket: "futbtechfeast.firebasestorage.app",
+            messagingSenderId: "64095326173",
+            appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        window.firebaseCollection = collection;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseGetDocs = getDocs;
+        
+        document.dispatchEvent(new Event('FirebaseReady'));
+    </script>
+
+    <script>
+        let cachedOrders = [];
+        let currentUser = null;
+
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const ordersContainer = document.getElementById('ordersContainer');
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+
+        document.addEventListener('FirebaseReady', () => {
+            window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                currentUser = user;
+                await fetchUserOrders();
+            });
+        });
+
+        async function fetchUserOrders() {
+            try {
+                const ordersRef = window.firebaseCollection(window.firebaseDb, 'orders');
+                const q = window.firebaseQuery(ordersRef, window.firebaseWhere('userId', '==', currentUser.uid));
+                const querySnapshot = await window.firebaseGetDocs(q);
+                cachedOrders = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    cachedOrders.push({
+                        id: doc.id,
+                        itemName: data.itemName || data.ticketTier || 'Access Pass / Registration',
+                        amount: parseFloat(data.amount || data.price || 0),
+                        status: (data.status || 'pending').toLowerCase(),
+                        dateString: data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('en-NG', {
+                            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        }) : 'N/A',
+                        paymentRef: data.paymentRef || data.reference || 'N/A',
+                        gateway: data.paymentMethod || data.gateway || 'Paystack Direct Transfer',
+                        matricNumber: data.matricNumber || 'N/A',
+                        email: data.email || currentUser.email
+                    });
+                });
+
+                if (cachedOrders.length === 0) {
+                    const regRef = window.firebaseCollection(window.firebaseDb, 'registrations');
+                    const regDoc = await window.firebaseGetDocs(window.firebaseQuery(regRef, window.firebaseWhere('email', '==', currentUser.email)));
+                    
+                    regDoc.forEach((doc) => {
+                        const rData = doc.data();
+                        if (rData.amount || rData.price) {
+                            cachedOrders.push({
+                                id: doc.id,
+                                itemName: rData.ticketTier ? `${rData.ticketTier} Ticket Pass` : 'TechFest Premium Delegate Access',
+                                amount: parseFloat(rData.amount || rData.price || 0),
+                                status: (rData.status || rData.paymentStatus || 'success').toLowerCase(),
+                                dateString: 'Registration Verified Record',
+                                paymentRef: rData.reference || 'System_Generated_Ref',
+                                gateway: 'Verified Core API Stack',
+                                matricNumber: rData.matricNumber || 'N/A',
+                                email: rData.email || currentUser.email
+                            });
+                        }
+                    });
+                }
+
+                buildDashboardMetrics(cachedOrders);
+                renderOrdersList(cachedOrders);
+
+            } catch (error) {
+                console.error("History Compilation Error: ", error);
+                loadingState.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+
+        function buildDashboardMetrics(orders) {
+            let aggregateSum = 0;
+            let successCounter = 0;
+            let pendingCounter = 0;
+
+            orders.forEach(order => {
+                if (['success', 'successful', 'approved', 'verified'].includes(order.status)) {
+                    aggregateSum += order.amount;
+                    successCounter++;
+                } else if (['pending', 'review'].includes(order.status)) {
+                    pendingCounter++;
+                }
+            });
+
+            document.getElementById('statTotalSpent').textContent = `₦${aggregateSum.toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
+            document.getElementById('statApprovedCount').textContent = successCounter;
+            document.getElementById('statPendingCount').textContent = pendingCounter;
+        }
+
+        function renderOrdersList(orders) {
+            loadingState.style.display = 'none';
+            ordersContainer.innerHTML = '';
+
+            if (orders.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            emptyState.style.display = 'none';
+
+            orders.forEach(order => {
+                let structuralBadgeStyle = 'pending';
+                if (['success', 'successful', 'approved', 'verified'].includes(order.status)) structuralBadgeStyle = 'success';
+                if (['failed', 'cancelled', 'rejected'].includes(order.status)) structuralBadgeStyle = 'failed';
+
+                const cardNode = document.createElement('div');
+                cardNode.className = 'order-card';
+                cardNode.innerHTML = `
+                    <div class="order-summary">
+                        <div class="order-main-info">
+                            <div class="order-icon">🎫</div>
+                            <div class="order-title-meta">
+                                <span class="order-item-title">${order.itemName}</span>
+                                <span class="order-date">${order.dateString}</span>
+                            </div>
+                        </div>
+                        <div class="order-pricing-status">
+                            <span class="order-price">₦${order.amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}</span>
+                            <span class="status-badge ${structuralBadgeStyle}">${order.status}</span>
+                        </div>
+                    </div>
+                    <div class="order-details-pane">
+                        <div class="details-grid">
+                            <div class="details-group">
+                                <span class="details-label">Order ID Signature</span>
+                                <span class="details-val mono">${order.id}</span>
+                            </div>
+                            <div class="details-group">
+                                <span class="details-label">Payment Gateway Reference</span>
+                                <span class="details-val mono">${order.paymentRef}</span>
+                            </div>
+                            <div class="details-group">
+                                <span class="details-label">Settlement Channel</span>
+                                <span class="details-val">${order.gateway}</span>
+                            </div>
+                            <div class="details-group">
+                                <span class="details-label">Beneficiary Email</span>
+                                <span class="details-val">${order.email}</span>
+                            </div>
+                            <div class="details-group">
+                                <span class="details-label">Verification Matrix ID</span>
+                                <span class="details-val mono">${order.matricNumber}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                cardNode.querySelector('.order-summary').addEventListener('click', () => {
+                    cardNode.classList.toggle('expanded');
+                });
+
+                ordersContainer.appendChild(cardNode);
+            });
+        }
+
+        function performFiltering() {
+            const searchVal = searchInput.value.toLowerCase().trim();
+            const filterVal = statusFilter.value;
+
+            const filteredSet = cachedOrders.filter(order => {
+                const matchesSearch = 
+                    order.id.toLowerCase().includes(searchVal) || 
+                    order.itemName.toLowerCase().includes(searchVal) ||
+                    order.paymentRef.toLowerCase().includes(searchVal);
+                
+                let normalizedStatus = 'pending';
+                if (['success', 'successful', 'approved', 'verified'].includes(order.status)) normalizedStatus = 'success';
+                if (['failed', 'cancelled', 'rejected'].includes(order.status)) normalizedStatus = 'failed';
+
+                const matchesStatus = (filterVal === 'all') || (normalizedStatus === filterVal);
+                return matchesSearch && matchesStatus;
+            });
+
+            renderOrdersList(filteredSet);
+        }
+
+        searchInput.addEventListener('input', performFiltering);
+        statusFilter.addEventListener('change', performFiltering);
+    </script>
+</body>
+</html>
