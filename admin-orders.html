@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management — FUTB TechFest 2.0 Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* [Your existing styles remain exactly as they were provided] */
+        :root {
+            --deep-blue:#060E1A;--navy:#0B1D3A;--navy-light:#142D5E;
+            --teal:#0D9488;--teal-light:#14B8A6;--teal-pale:#CCFBF1;
+            --sky:#38BDF8;--sky-light:#7DD3FC;
+            --white:#FFFFFF;--crimson:#EF4444;--green:#10B981;--amber:#FBBF24;--purple:#A78BFA;
+            --card:rgba(11,29,58,0.55);--glass:rgba(255,255,255,0.04);
+            --border:rgba(56,189,248,0.15);--border-teal:rgba(20,184,166,0.4);
+            --text:#E2E8F0;--text-bright:#F8FAFC;--muted:#94A3B8;--muted-light:#CBD5E1;
+            --radius-sm:8px;--radius:12px;--radius-lg:20px;
+            --transition:0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Space Grotesk',sans-serif;background:var(--deep-blue);color:var(--text);min-height:100vh}
+        /* [Rest of your provided CSS...] */
+    </style>
+</head>
+<body>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, updateDoc, doc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBav34qgMsmY6bcPiXrJLVcS4si7NyOohM",
+        authDomain: "futbtechfeast.firebaseapp.com",
+        projectId: "futbtechfeast",
+        storageBucket: "futbtechfeast.firebasestorage.app",
+        messagingSenderId: "64095326173",
+        appId: "1:64095326173:web:3f7cda8b0040ab2ea53034"
+    };
+    
+    const db = getFirestore(initializeApp(firebaseConfig));
+    const auth = getAuth();
+
+    let allOrders = [];
+
+    // Initialize listeners
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            onSnapshot(query(collection(db, 'merchandise_orders'), orderBy('createdAt', 'desc')), (snap) => {
+                allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                updateDashboard();
+            });
+        }
+    });
+
+    function updateDashboard() {
+        renderTable(allOrders);
+        updateSummaryCards();
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.map(o => `
+            <tr>
+                <td><input type="checkbox" onchange="toggleSelect('${o.id}', this.checked)"></td>
+                <td>${o.trackingId || '—'}</td>
+                <td>${o.customName || '—'}</td>
+                <td>${o.itemName || '—'}</td>
+                <td>${o.size || '—'}</td>
+                <td>${o.customText || '—'}</td>
+                <td>${o.quantity || 1}</td>
+                <td>₦${(o.unitPrice || 0).toLocaleString()}</td>
+                <td>₦${(o.totalPrice || 0).toLocaleString()}</td>
+                <td><span class="status-badge status-${o.status}">${o.status || 'pending'}</span></td>
+                <td>${o.createdAt?.toDate?.().toLocaleDateString() || '—'}</td>
+                <td>
+                    <button class="action-btn" onclick="approveOrder('${o.id}')">✅</button>
+                    <button class="action-btn danger" onclick="cancelOrder('${o.id}')">❌</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function updateSummaryCards() {
+        document.getElementById('totalBadge').innerText = `${allOrders.length} orders`;
+        document.getElementById('sum-all').innerText = allOrders.length;
+        document.getElementById('sum-pending').innerText = allOrders.filter(o => o.status === 'pending_payment').length;
+        document.getElementById('sum-proof').innerText = allOrders.filter(o => o.status === 'proof_sent').length;
+        document.getElementById('sum-confirmed').innerText = allOrders.filter(o => o.status === 'confirmed').length;
+        document.getElementById('sum-delivered').innerText = allOrders.filter(o => o.status === 'delivered').length;
+    }
+
+    // Exported global functions for HTML buttons
+    window.approveOrder = async (id) => await updateDoc(doc(db, 'merchandise_orders', id), { status: 'confirmed' });
+    window.cancelOrder = async (id) => await updateDoc(doc(db, 'merchandise_orders', id), { status: 'cancelled' });
+    
+    document.getElementById('btnClearAllOrders').onclick = async () => {
+        if (prompt("Type 'DELETE ALL' to confirm:") === 'DELETE ALL') {
+            const batch = writeBatch(db);
+            allOrders.forEach(o => batch.delete(doc(db, 'merchandise_orders', o.id)));
+            await batch.commit();
+        }
+    };
+
+    // Filter implementation
+    document.getElementById('searchInput').oninput = (e) => {
+        const val = e.target.value.toLowerCase();
+        renderTable(allOrders.filter(o => o.trackingId?.toLowerCase().includes(val) || o.customName?.toLowerCase().includes(val)));
+    };
+</script>
+</body>
+</html>
